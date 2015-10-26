@@ -9,3 +9,7 @@ Files: getID3/*
 Copyright: 2015 James Heinrich (<info@getid3.org>)
 Comment: http://www.getid3.org  or  http://getid3.sourceforge.net
 License: GPL-3
+
+Files: pics/audio.png pics/video.png
+Copyright: KDE-Artwork Team (http://kde.org)
+License: LGPL-3 / public domain
