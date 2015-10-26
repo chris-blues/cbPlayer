@@ -112,7 +112,7 @@ foreach ($dir as $key => $filename)
    unset($ThisFileInfo);
   }
 ?>
-  <div id="cbPlayer_statusbar">Please wait while the meta data is being downloaded.</div>
+  <div id="cbPlayer_statusbar">Trying to download meta data...</div>
 <?php
 echo "  <div id=\"cbPlayer_mediaFiles\">\n";
 foreach ($files as $key => $id)
@@ -122,7 +122,7 @@ foreach ($files as $key => $id)
 ?>
      <<?php echo $mediatag; ?> class="cbPlayer_mediacontent" id="cbPlayer_<?php echo $files[$key]["id"]; ?>"
         mediagroup="cbplayer"
-        preload="auto"
+        preload="metadata"
         onended="currentMediaId++; playMedia(currentMediaId);"
         onprogress="showMedia(<?php echo $files[$key]["id"]; ?>);"
         oncanplay="activateMedia(<?php echo $files[$key]["id"]; ?>);"
@@ -132,13 +132,11 @@ foreach ($files as $key => $id)
         data-album="<?php echo $files[$key]["album"]; ?>"
         data-year="<?php echo $files[$key]["year"]; ?>"
         data-filename="<?php echo rawurlencode($files[$key]["filename"]); ?>"
-        data-mediatype="<?php echo $files[$key]["mediatype"]; ?>"
-<?php foreach ($files[$key]["type"] as $extkey => $ext) { ?>
-        data-filesize-<?php echo $files[$key]["type"][$extkey]["ext"]; ?>="<?php echo $files[$key]["type"][$extkey]["filesize"]; ?>"<?php } ?>>
+        data-mediatype="<?php echo $files[$key]["mediatype"]; ?>">
 <?php
    foreach ($files[$key]["type"] as $extkey => $ext)
      { ?>
-       <source src="<?php echo "$cbPlayer_dirname/" . rawurlencode($files[$key]["filename"]) . ".{$files[$key]["type"][$extkey]["ext"]}"; ?>" type="<?php echo $files[$key]["type"][$extkey]["mime"]; ?>">
+       <source src="<?php echo "$cbPlayer_dirname/" . rawurlencode($files[$key]["filename"]) . ".{$files[$key]["type"][$extkey]["ext"]}"; ?>" type="<?php echo $files[$key]["type"][$extkey]["mime"]; ?>" class="cbPlayer_<?php echo $files[$key]["id"]; ?>" id="cbPlayer_playlistItem_<?php echo $files[$key]["id"] . "_" . $files[$key]["type"][$extkey]["ext"]; ?>" data-filesize="<?php echo $files[$key]["type"][$extkey]["filesize"]; ?>">
 <?php
      } ?>
      </<?php echo $files[$key]["mediatype"]; ?>>
@@ -177,9 +175,12 @@ echo "<hr>\n";
   </div>
 </div>
   <table id="cbPlayer_infobox">
-    <tr><td class="cbPlayer_mediaInfo cbPlayer_leftside" id="cbPlayer_title"></td><td id="cbPlayer_currentTitle" class="cbPlayer_mediaInfo"></td><tr>
-    <tr><td class="cbPlayer_mediaInfo cbPlayer_leftside" id="cbPlayer_artist"></td><td id="cbPlayer_currentArtist" class="cbPlayer_mediaInfo"></td><tr>
-    <tr><td class="cbPlayer_mediaInfo cbPlayer_leftside" id="cbPlayer_album"></td><td id="cbPlayer_currentAlbum" class="cbPlayer_mediaInfo"></td></tr>
+    <tbody>
+      <tr><td class="cbPlayer_mediaInfo cbPlayer_leftside" id="cbPlayer_title"></td><td id="cbPlayer_currentTitle" class="cbPlayer_mediaInfo"></td></tr>
+      <tr><td class="cbPlayer_mediaInfo cbPlayer_leftside" id="cbPlayer_artist"></td><td id="cbPlayer_currentArtist" class="cbPlayer_mediaInfo"></td></tr>
+      <tr><td class="cbPlayer_mediaInfo cbPlayer_leftside" id="cbPlayer_album"></td><td id="cbPlayer_currentAlbum" class="cbPlayer_mediaInfo"></td></tr>
+      <tr><td class="cbPlayer_mediaInfo cbPlayer_leftside" id="cbPlayer_download"></td><td id="cbPlayer_currentDownload" class="cbPlayer_mediaInfo"></td></tr>
+    </tbody>
   </table>
 
 <script>
@@ -189,6 +190,8 @@ echo "<hr>\n";
   // ==  Read all media items and create a playlist  ==
   // ==================================================
   var currentMediaId = 0;
+  var notificationSwitch = 0;
+  var version = "v0.02";
 
   // =======================
   // ==  Create Playlist  ==
@@ -203,14 +206,15 @@ echo "<hr>\n";
         var div = document.createElement("div");
         div.id = i + "_" + mediaElements[i].getAttribute("data-filename");
         div.className = "cbPlayer_playlist " + i;
-        var linkname = mediaElements[i].getAttribute("data-artist") + ' - ' + mediaElements[i].getAttribute("data-title");
-        var textnode = document.createTextNode(linkname);
-        div.appendChild(textnode);
 
         var span = document.createElement("span"); // for status display
         span.id = "cbPlayer_status_" + i;
         span.className = "cbPlayer_statusfield";
         div.appendChild(span);
+
+        var linkname = mediaElements[i].getAttribute("data-artist") + ' - ' + mediaElements[i].getAttribute("data-title");
+        var textnode = document.createTextNode(linkname);
+        div.appendChild(textnode);
 
         a.appendChild(div);
         var parent = document.getElementById("cbPlayer_playlist");
@@ -221,12 +225,21 @@ echo "<hr>\n";
     }
   document.getElementById("cbPlayer_progressbar").style.display = "block";
   document.getElementById("cbPlayer_mediaItems").innerHTML = currentMediaId + 1 + "/" + mediaElements.length;
+  document.getElementById("cbPlayer_leftSideBox").style.display = "block";
+  document.getElementById("cbPlayer_artist").innerHTML = "Artist:";
+  document.getElementById("cbPlayer_title").innerHTML = "Title:";
+  document.getElementById("cbPlayer_album").innerHTML = "Album:";
+  document.getElementById("cbPlayer_download").innerHTML = "Download:";
 
   function showMedia(i)
     {
      var loadedMedia = document.getElementById("cbPlayer_playlistItemLink_" + i);
      loadedMedia.style.display = "block";
-     document.getElementById("cbPlayer_status_" + i).innerHTML = "Please wait! Downloading meta-data...";
+     if (notificationSwitch < 1)
+       {
+        document.getElementById("cbPlayer_status_" + i).innerHTML = "Downloading meta-data...";
+        notificationSwitch++;
+       }
     }
 
   function activateMedia(i)
@@ -239,8 +252,13 @@ echo "<hr>\n";
      document.getElementById("cbPlayer_artist").innerHTML = "Artist:";
      document.getElementById("cbPlayer_title").innerHTML = "Title:";
      document.getElementById("cbPlayer_album").innerHTML = "Album:";
+     document.getElementById("cbPlayer_download").innerHTML = "Download:";
      document.getElementById("cbPlayer_leftSideBox").style.display = "block";
-     document.getElementById("cbPlayer_statusbar").innerHTML = "Some files may be ready to play.";
+     if (notificationSwitch < 2)
+       {
+        document.getElementById("cbPlayer_statusbar").innerHTML = "Some files may be ready to play.";
+        notificationSwitch++;
+       }
     }
 
   function finishMedia(i)
@@ -249,7 +267,13 @@ echo "<hr>\n";
      loadedMedia.style.display = "block";
      loadedMedia.style.color = "#000000";
      document.getElementById("cbPlayer_status_" + i).innerHTML = "";
-     document.getElementById("cbPlayer_statusbar").innerHTML = "";
+     document.getElementById("cbPlayer_status_" + i).style.display = "none";
+     if (notificationSwitch < 3)
+       {
+        document.getElementById("cbPlayer_statusbar").innerHTML = "cbPlayer " + version;
+        document.getElementById("cbPlayer_statusbar").style.display = "none";
+        notificationSwitch++;
+       }
     }
 
   function activateMediaControl(cbplayerControllerId)
@@ -363,6 +387,21 @@ echo "<hr>\n";
      else
        {
         document.getElementById("cbPlayer_currentAlbum").innerHTML = currentMedia.getAttribute("data-album");
+       }
+     var downloads = document.getElementsByClassName("cbPlayer_" + currentMediaId);
+        document.getElementById("cbPlayer_currentDownload").innerHTML = "";
+     for (var i = 0; i < downloads.length; i++)
+       {
+        a = document.createElement("a");
+        a.class = "cbPlayer_downloadLink";
+        a.href = downloads[i].getAttribute("src");
+        a.download = "";
+        a.text = downloads[i].getAttribute("type");
+        document.getElementById("cbPlayer_currentDownload").appendChild(a);
+        var filesize = downloads[i].getAttribute("data-filesize") / 1024 / 1024;
+        var shortenedFilesize = Math.round(filesize * 100) / 100;
+        var app = " (" + shortenedFilesize + " MB) ";
+        document.getElementById("cbPlayer_currentDownload").innerHTML += app;
        }
      currentMedia.ontimeupdate = function() { updateTime() };
 
