@@ -1,6 +1,7 @@
 <div id="cbplayer">
 <?php
 $starttime = microtime(true);
+$version = "v0.04";
 
 $application = $_GET["media"]; // can be "audio" or "video" !!
 if ($application == "") $application = "audio";
@@ -139,9 +140,10 @@ foreach ($files as $key => $id)
         mediagroup="cbplayer"
         preload="metadata"
         onended="currentMediaId++; playMedia(currentMediaId);"
-        onprogress="showMedia(<?php echo $files[$key]["id"]; ?>);"
-        oncanplay="activateMedia(<?php echo $files[$key]["id"]; ?>);"
-        oncanplaythrough="finishMedia(<?php echo $files[$key]["id"]; ?>);"
+        onloadstart="showMedia(<?php echo $files[$key]["id"]; ?>);"
+        onloadedmetadata="activateMedia(<?php echo $files[$key]["id"]; ?>);"
+        onprogress="finishMedia(<?php echo $files[$key]["id"]; ?>);"
+        oncanplaythrough="showMedia(<?php echo $files[$key]["id"]; ?>); activateMedia(<?php echo $files[$key]["id"]; ?>); finishMedia(<?php echo $files[$key]["id"]; ?>);"
         data-artist="<?php echo $files[$key]["artist"]; ?>"
         data-title="<?php echo $files[$key]["title"]; ?>"
         data-album="<?php echo $files[$key]["album"]; ?>"
@@ -174,19 +176,22 @@ echo "<hr>\n";
     </div>
 <div id="cbPlayer_leftSideBox">
   <div class="cbPlayer_mediacontrols_wrapper">
-    <a href="javascript:prevMedia();"><img id="cbPlayer_prev" class="cbPlayer_mediacontrols" src="cbplayer/pics/rwd.png" alt="prev" title="prev"></a>
-    <a href="javascript:playMedia(currentMediaId);"><img id="cbPlayer_play" class="cbPlayer_mediacontrols" src="cbplayer/pics/play.png" alt="play" title="play"></a>
-    <a href="javascript:stopMedia();" id="cbPlayer_stopButton"><img id="cbPlayer_stop" class="cbPlayer_mediacontrols" src="cbplayer/pics/stop.png" alt="stop" title="stop"></a>
-    <a href="javascript:nextMedia();"><img id="cbPlayer_next" class="cbPlayer_mediacontrols" src="cbplayer/pics/fwd.png" alt="next" title="next"></a>
+    <a href="javascript:prevMedia();"><img id="cbPlayer_prev" class="cbPlayer_mediacontrols" src="/cbplayer/pics/rwd.png" alt="prev" title="prev"></a>
+    <a href="javascript:playMedia(currentMediaId);"><img id="cbPlayer_play" class="cbPlayer_mediacontrols" src="/cbplayer/pics/play.png" alt="play" title="play"></a>
+    <a href="javascript:stopMedia();" id="cbPlayer_stopButton"><img id="cbPlayer_stop" class="cbPlayer_mediacontrols" src="/cbplayer/pics/stop.png" alt="stop" title="stop"></a>
+    <a href="javascript:nextMedia();"><img id="cbPlayer_next" class="cbPlayer_mediacontrols" src="/cbplayer/pics/fwd.png" alt="next" title="next"></a>
     <a class="cbPlayer_fullscreen" href="javascript:" onclick="var currentMedia = document.getElementById('cbPlayer_' + currentMediaId);
      // go full-screen
      if (currentMedia.requestFullscreen) { currentMedia.requestFullscreen(); }
      else if (currentMedia.msRequestFullscreen) { currentMedia.msRequestFullscreen(); }
      else if (currentMedia.mozRequestFullScreen) { currentMedia.mozRequestFullScreen(); }
-     else if (currentMedia.webkitRequestFullscreen) { currentMedia.webkitRequestFullscreen(); }"><img id="cbPlayer_fullscreen" class="cbPlayer_mediacontrols cbPlayer_fullscreen" src="cbplayer/pics/fullscreen.png" alt="fullscreen" title="fullscreen" style="display: none;"></a>
+     else if (currentMedia.webkitRequestFullscreen) { currentMedia.webkitRequestFullscreen(); }"><img id="cbPlayer_fullscreen" class="cbPlayer_mediacontrols cbPlayer_fullscreen" src="/cbplayer/pics/fullscreen.png" alt="fullscreen" title="fullscreen" style="display: none;"></a>
   </div>
   <div id="cbPlayer_progressinfo">
     <span id="cbPlayer_mediaItems" class="cbPlayer_progressinfo"></span> <span id="cbPlayer_progress" class="cbPlayer_progressinfo">0:00 / 0:00</span>
+  </div>
+  <div id="cbPlayer_progInfo">
+    cbPlayer <?php echo $version; ?>
   </div>
 </div>
   <table id="cbPlayer_infobox">
@@ -211,7 +216,7 @@ echo "<hr>\n";
 
   var currentMediaId = 0;
   var notificationSwitch = 0;
-  var version = "v0.03";
+  var version = "<?php echo $version; ?>";
 
   function showMedia(i)
     {
@@ -270,17 +275,16 @@ echo "<hr>\n";
         cbplayerController[i].removeAttribute("style");
         cbplayerController[i].style.boxShadow = "0px 0px 2px 1px gray";
        }
-     controllerButton.style.backgroundColor = "#EEEEEE";
      controllerButton.style.boxShadow = "0px 0px 2px 1px #CCC";
      if (cbplayerControllerId == "play")
        {
-        document.getElementById("cbPlayer_play").src = "cbplayer/pics/play_active.png";
-        document.getElementById("cbPlayer_stop").src = "cbplayer/pics/stop.png";
+        document.getElementById("cbPlayer_play").src = "/cbplayer/pics/play_active.png";
+        document.getElementById("cbPlayer_stop").src = "/cbplayer/pics/stop.png";
        }
      if (cbplayerControllerId == "stop")
        {
-        document.getElementById("cbPlayer_play").src = "cbplayer/pics/play.png";
-        document.getElementById("cbPlayer_stop").src = "cbplayer/pics/stop_active.png";
+        document.getElementById("cbPlayer_play").src = "/cbplayer/pics/play.png";
+        document.getElementById("cbPlayer_stop").src = "/cbplayer/pics/stop_active.png";
        }
 
 
