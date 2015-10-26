@@ -1,0 +1,114 @@
+#cbplayer {
+  box-shadow: 0px 0px 3px 1px #000;
+  padding:15px;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 1);
+  text-align: left !important;
+}
+
+#cbPlayer_statusbar {
+  text-align: center;
+  font-size: 1.2em;
+  font-weight: 600;
+  color: #4C0000;
+}
+
+.cbPlayer_playlistitem {
+  text-decoration: none !important;
+  color: #AAAAAA;
+  display: none;
+}
+
+.cbPlayer_statusfield {
+  background-color: #EEEEEE;
+  margin-right: 30px;
+  font-size: 0.75em;
+  font-weight: bold;
+  color: red;
+}
+
+.cbPlayer_mediacontent {
+  display: none;
+}
+
+audio {
+  display: none !important;
+}
+
+.cbPlayer_cbPlayer_mediacontrols_wrapper {
+  margin: 10px auto;
+}
+
+.cbPlayer_mediacontrols {
+  margin: 0px;
+  padding: 0px;
+  box-shadow: 0px 0px 2px 1px gray;
+  border-radius: 4px;
+  border: none;
+}
+
+img.cbPlayer_mediacontrols {
+  width:30px;
+  background-color: #EEEEEE;
+}
+
+#cbPlayer_progressbar {
+  width: 100%;
+  margin: 0px;
+  padding: 10px 0px;
+  display: none;
+}
+
+#cbPlayer_progressbarWrapper {
+  background-color: #CCCCCC;
+  margin: 0px;
+  padding: 0px;
+}
+
+#cbPlayer_progressbarIndicator {
+  height: 8px;
+  width: 0%;
+  background-color: green;
+  margin: 0px;
+  padding: 0px;
+}
+
+#cbPlayer_progressinfo {
+  margin-top: 4px;
+}
+
+.cbPlayer_progressinfo {
+  background-color: #FAF5EB;
+  margin: 10px 0px;
+  padding: 2px 5px;
+  border-radius: 6px;
+  border: 1px solid lightgray;
+  font-size: 0.8em;
+}
+
+@media (min-width: 500px)
+{
+#cbPlayer_infobox {
+  margin: 10px 0px 0px 140px;
+  border-collapse: collapse;
+}
+#cbPlayer_leftSideBox {
+  float: left;
+  margin: 10px;
+  display: none;
+}
+}
+@media (max-width: 499px)
+{
+#cbPlayer_infobox {
+  margin: 10px;
+  border-collapse: collapse;
+}
+#cbPlayer_leftSideBox {
+  margin: 10px;
+}
+}
+
+.cbPlayer_mediaInfo {
+  vertical-align: top;
+}

@@ -1,0 +1,11 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+
+Files: *
+Copyright: 2015, chris_blues <chris@musicchris.de>
+Comment: https://musicchris.de/download/cbplayer.tar.gz
+License: GPL-3
+
+Files: getID3/*
+Copyright: 2015 James Heinrich (<info@getid3.org>)
+Comment: http://www.getid3.org  or  http://getid3.sourceforge.net
+License: GPL-3
