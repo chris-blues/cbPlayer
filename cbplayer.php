@@ -19,20 +19,23 @@ $counter = -1;
 foreach ($dir as $key => $filename)
   { // screen out dotfiles ("." ".." or ".htaccess") and leave only mp3 in the array!
    if (strncmp($filename,".",1) == 0) { unset($dir[$key]); continue 1; }
- //  if (!stristr($filename,".mp3",-4)) { unset($dir[$key]); continue 1; }
 
    $oldfilename = $filename;
    $filename = str_replace($search, $replace, $filename);
-   rename("$cbPlayer_dirname/$oldfilename", "$cbPlayer_dirname/$filename");
+   if (strcmp($filename, $oldfilename) != 0) rename("$cbPlayer_dirname/$oldfilename", "$cbPlayer_dirname/$filename");
    unset ($oldfilename);
    $dir[$key] = $filename;
    $lastname = $name;
-   $name = substr($filename,0,strlen($filename) - 4);
-   $ext = substr($filename,-3);
+   $name = substr($filename, 0, strlen($filename) - 4);
+   $ext = substr($filename, -3);
+
+ // quick and dirty workaround for 4-letter extension "webm"
+   if ($ext == "ebm") { $ext = "webm"; $name = substr($name, 0, -1); }
+
    $fullname = "$cbPlayer_dirname/$filename";
 
    // check if this file is usable, skip if not!
-   $supported_filetypes = array("mp3", "ogg", "mp4", "oga", "ogv");
+   $supported_filetypes = array("mp3", "ogg", "mp4", "oga", "ogv", "webm");
    foreach ($supported_filetypes as $typenum => $filetype)
      {
       if (strcasecmp($ext,$filetype) == 0) $supported = TRUE;
@@ -40,7 +43,7 @@ foreach ($dir as $key => $filename)
    if (!isset($supported)) { unset($dir[$key]); continue 1; }
    unset($supported);
 
-   // if this file has the same name but different extension, stay in the same branch, but add extension
+   // if this file has the same name as the last run, but different extension -> stay in the same branch, but add extension
    if (strcasecmp($lastname,$name) == 0)
      {
       $ThisFileInfo = $getID3->analyze($fullname);
@@ -49,15 +52,21 @@ foreach ($dir as $key => $filename)
       foreach ($files[$counter]["type"] as $extcount => $sth) { }
       $extcount++;
       $files[$counter]["type"][$extcount]["ext"] = $ThisFileInfo["fileformat"];
-      $files[$counter]["type"][$extcount]["mime"] = $ThisFileInfo["mime_type"];
       $files[$counter]["type"][$extcount]["filesize"] = $ThisFileInfo["filesize"];
       if (isset($ThisFileInfo["video"]["dataformat"]))
         {
-         if ($ext == "ogg") $files[$counter]["type"][$extcount]["mime"] = "video/$ext";
+         // ===================================================================
+         // InternetExplorer doesn't seem to like "video/quicktime" mime-type!
+         // So, we name it "video/mp4". In the same spirit I rather "normalize"
+         // ogg-mime from "application/ogg" to "audio/ogg" / "video/ogg"... :-/
+         // ===================================================================
+         if ($ThisFileInfo["fileformat"] == "ogg" or $ThisFileInfo["fileformat"] == "ogv" or $ThisFileInfo["fileformat"] == "mp4") $files[$counter]["type"][$extcount]["mime"] = "video/" . $ThisFileInfo["fileformat"];
+         else $files[$counter]["type"][$extcount]["mime"] = $ThisFileInfo["mime_type"];
         }
       else
         {
-         if ($ext == "ogg") $files[$counter]["type"][$extcount]["mime"] = "audio/$ext";
+         if ($ThisFileInfo["fileformat"] == "ogg" or $ThisFileInfo["fileformat"] == "oga") $files[$counter]["type"][$extcount]["mime"] = "audio/" . $ThisFileInfo["fileformat"];
+         else $files[$counter]["type"][$extcount]["mime"] = $ThisFileInfo["mime_type"];
         }
 
       // Check if some tags are missing - try to get it from alternative file!
@@ -90,19 +99,25 @@ foreach ($dir as $key => $filename)
 
       if (isset($ThisFileInfo["video"]["dataformat"]))
         {
+         // ===================================================================
+         // InternetExplorer doesn't seem to like "video/quicktime" mime-type!
+         // So, we name it "video/mp4". In the same spirit I rather "normalize"
+         // ogg-mime from "application/ogg" to "audio/ogg" / "video/ogg"... :-/
+         // ===================================================================
          $files[$counter]["mediatype"] = "video";
-         if ($ext == "ogg") $files[$counter]["type"][0]["mime"] = "video/$ext";
+         if ($ThisFileInfo["fileformat"] == "ogg" or $ThisFileInfo["fileformat"] == "mp4") $files[$counter]["type"][0]["mime"] = "video/" . $ThisFileInfo["fileformat"];
+         else $files[$counter]["type"][0]["mime"] = $ThisFileInfo["mime_type"];
         }
       else
         {
          $files[$counter]["mediatype"] = "audio";
-         if ($ext == "ogg") $files[$counter]["type"][0]["mime"] = "audio/$ext";
+         if ($ThisFileInfo["fileformat"] == "ogg") $files[$counter]["type"][0]["mime"] = "audio/" . $ThisFileInfo["fileformat"];
+         else $files[$counter]["type"][0]["mime"] = $ThisFileInfo["mime_type"];
         }
       $files[$counter]["playtime"] = ceil($ThisFileInfo["playtime_seconds"]);
       $files[$counter]["id"] = $counter;
       $files[$counter]["filename"] = $name;
-      $files[$counter]["type"][0]["ext"] = $ext;
-      $files[$counter]["type"][0]["mime"] = $ThisFileInfo["mime_type"];
+      $files[$counter]["type"][0]["ext"] = $ThisFileInfo["fileformat"];
       $files[$counter]["type"][0]["filesize"] = $ThisFileInfo["filesize"];
       $files[$counter]["artist"] = $ThisFileInfo['comments']['artist'][0];
       $files[$counter]["title"] = $ThisFileInfo['comments']['title'][0];
@@ -136,7 +151,7 @@ foreach ($files as $key => $id)
 <?php
    foreach ($files[$key]["type"] as $extkey => $ext)
      { ?>
-       <source src="<?php echo "$cbPlayer_dirname/" . rawurlencode($files[$key]["filename"]) . ".{$files[$key]["type"][$extkey]["ext"]}"; ?>" type="<?php echo $files[$key]["type"][$extkey]["mime"]; ?>" class="cbPlayer_<?php echo $files[$key]["id"]; ?>" id="cbPlayer_playlistItem_<?php echo $files[$key]["id"] . "_" . $files[$key]["type"][$extkey]["ext"]; ?>" data-filesize="<?php echo $files[$key]["type"][$extkey]["filesize"]; ?>">
+       <source src="<?php echo "$cbPlayer_dirname/" . rawurlencode($files[$key]["filename"]) . ".{$files[$key]["type"][$extkey]["ext"]}"; ?>" type="<?php echo $files[$key]["type"][$extkey]["mime"]; ?>" class="cbPlayer_<?php echo $files[$key]["id"]; ?>" id="cbPlayer_playlistItem_<?php echo $files[$key]["id"] . "_" . $files[$key]["type"][$extkey]["ext"]; ?>" data-filesize="<?php echo $files[$key]["type"][$extkey]["filesize"]; ?>" data-fileformat="<?php echo $files[$key]["type"][$extkey]["ext"]; ?>">
 <?php
      } ?>
      </<?php echo $files[$key]["mediatype"]; ?>>
@@ -189,52 +204,20 @@ echo "<hr>\n";
   // ==================================================
   // ==  Read all media items and create a playlist  ==
   // ==================================================
+  if (typeof jQuery == 'undefined')
+    { var JQueryIsLoaded = false; }
+  else
+    { var JQueryIsLoaded = true; }
+
   var currentMediaId = 0;
   var notificationSwitch = 0;
-  var version = "v0.02";
-
-  // =======================
-  // ==  Create Playlist  ==
-  // =======================
-  var mediaElements = document.getElementsByClassName("cbPlayer_mediacontent");
-  for (var i = 0; i < mediaElements.length; i++)
-    {
-        var a = document.createElement("a"); // create Link - non-clickable yet, until we have the necessary data downloaded!
-        a.className = "cbPlayer_playlistitem";
-        a.id = "cbPlayer_playlistItemLink_" + i;
-
-        var div = document.createElement("div");
-        div.id = i + "_" + mediaElements[i].getAttribute("data-filename");
-        div.className = "cbPlayer_playlist " + i;
-
-        var span = document.createElement("span"); // for status display
-        span.id = "cbPlayer_status_" + i;
-        span.className = "cbPlayer_statusfield";
-        div.appendChild(span);
-
-        var linkname = mediaElements[i].getAttribute("data-artist") + ' - ' + mediaElements[i].getAttribute("data-title");
-        var textnode = document.createTextNode(linkname);
-        div.appendChild(textnode);
-
-        a.appendChild(div);
-        var parent = document.getElementById("cbPlayer_playlist");
-        parent.appendChild(a);
-
-        if (mediaElements.readyState > 0) showMedia(i);
-        if (mediaElements.readyState > 3) activateMedia(i);
-    }
-  document.getElementById("cbPlayer_progressbar").style.display = "block";
-  document.getElementById("cbPlayer_mediaItems").innerHTML = currentMediaId + 1 + "/" + mediaElements.length;
-  document.getElementById("cbPlayer_leftSideBox").style.display = "block";
-  document.getElementById("cbPlayer_artist").innerHTML = "Artist:";
-  document.getElementById("cbPlayer_title").innerHTML = "Title:";
-  document.getElementById("cbPlayer_album").innerHTML = "Album:";
-  document.getElementById("cbPlayer_download").innerHTML = "Download:";
+  var version = "v0.03";
 
   function showMedia(i)
     {
      var loadedMedia = document.getElementById("cbPlayer_playlistItemLink_" + i);
-     loadedMedia.style.display = "block";
+     if (JQueryIsLoaded) $(loadedMedia).slideDown(500, function() { loadedMedia.style.display = "block"; });
+     else loadedMedia.style.display = "block";
      if (notificationSwitch < 1)
        {
         document.getElementById("cbPlayer_status_" + i).innerHTML = "Downloading meta-data...";
@@ -288,7 +271,7 @@ echo "<hr>\n";
         cbplayerController[i].style.boxShadow = "0px 0px 2px 1px gray";
        }
      controllerButton.style.backgroundColor = "#EEEEEE";
-     controllerButton.style.boxShadow = "none";
+     controllerButton.style.boxShadow = "0px 0px 2px 1px #CCC";
      if (cbplayerControllerId == "play")
        {
         document.getElementById("cbPlayer_play").src = "cbplayer/pics/play_active.png";
@@ -356,6 +339,7 @@ echo "<hr>\n";
 
      currentMediaId = MediaId;
 
+      // Lets avoid overshooting the playlist!
       if (currentMediaId >= mediaElements.length)
        {
         currentMediaId = 0;
@@ -395,7 +379,7 @@ echo "<hr>\n";
         a = document.createElement("a");
         a.class = "cbPlayer_downloadLink";
         a.href = downloads[i].getAttribute("src");
-        a.download = "";
+        a.download = currentMedia.getAttribute("data-artist") + " - " + currentMedia.getAttribute("data-title") + "." + downloads[i].getAttribute("data-fileformat");
         a.text = downloads[i].getAttribute("type");
         document.getElementById("cbPlayer_currentDownload").appendChild(a);
         var filesize = downloads[i].getAttribute("data-filesize") / 1024 / 1024;
@@ -431,6 +415,7 @@ echo "<hr>\n";
        }
      document.getElementById("cbPlayer_playlist").removeAttribute("style");
      document.getElementById("cbPlayer_fullscreen").style.display = "none";
+
      // exit full-screen
      if (document.exitFullscreen) { document.exitFullscreen(); }
      else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
@@ -464,6 +449,50 @@ echo "<hr>\n";
      var x = event.clientX - rect.left;
      currentMedia.currentTime = (currentMedia.duration * x) / rect.width;
     }
+
+  // =======================
+  // ==  Create Playlist  ==
+  // =======================
+  var mediaElements = document.getElementsByClassName("cbPlayer_mediacontent");
+  for (var i = 0; i < mediaElements.length; i++)
+    {
+        var a = document.createElement("a"); // create Link - non-clickable yet, until we have the necessary data downloaded!
+        a.className = "cbPlayer_playlistitem";
+        a.id = "cbPlayer_playlistItemLink_" + i;
+        a.style.display = "none";
+
+        var div = document.createElement("div");
+        div.id = i + "_" + mediaElements[i].getAttribute("data-filename");
+        div.className = "cbPlayer_playlist " + i;
+
+        var img = document.createElement("img");
+        img.className = "mediaIcon";
+        img.src = "cbplayer/pics/" + mediaElements[i].getAttribute("data-mediatype") + ".png";
+        div.appendChild(img);
+
+        var span = document.createElement("span"); // for status display
+        span.id = "cbPlayer_status_" + i;
+        span.className = "cbPlayer_statusfield";
+        div.appendChild(span);
+
+        var linkname = mediaElements[i].getAttribute("data-artist") + ' - ' + mediaElements[i].getAttribute("data-title");
+        var textnode = document.createTextNode(linkname);
+        div.appendChild(textnode);
+
+        a.appendChild(div);
+        var parent = document.getElementById("cbPlayer_playlist");
+        parent.appendChild(a);
+
+        if (mediaElements.readyState > 0) showMedia(i);
+        if (mediaElements.readyState > 3) activateMedia(i);
+    }
+  document.getElementById("cbPlayer_progressbar").style.display = "block";
+  document.getElementById("cbPlayer_mediaItems").innerHTML = currentMediaId + 1 + "/" + mediaElements.length;
+  document.getElementById("cbPlayer_leftSideBox").style.display = "block";
+  document.getElementById("cbPlayer_artist").innerHTML = "Artist:";
+  document.getElementById("cbPlayer_title").innerHTML = "Title:";
+  document.getElementById("cbPlayer_album").innerHTML = "Album:";
+  document.getElementById("cbPlayer_download").innerHTML = "Download:";
 
 </script>
 <noscript>Dieser Medienplayer benötigt JavaScript um zu funktionieren. Dazu müssen Sie JavaScript aktivieren.</noscript>

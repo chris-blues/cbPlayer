@@ -10,5 +10,13 @@ For an example, how to include cbPlayer into your website, see index.php!
 
 =============================================
 
-Changelog v0.02:
+Changelog
+=========
+
+v0.03: (2015-10-18)
+* Added a prettier filename for download
+* Corrected some mime-type issues
+* added audio/video icons in the playlist
+
+v0.02: (2015-10-13)
 * Added a download section for the current file in the infobox

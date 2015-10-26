@@ -16,7 +16,13 @@
 .cbPlayer_playlistitem {
   text-decoration: none !important;
   color: #AAAAAA;
-  display: none;
+  display: block;
+}
+
+.mediaIcon {
+  display: inline;
+  vertical-align: middle;
+  margin-right: 7px;
 }
 
 .cbPlayer_statusfield {
