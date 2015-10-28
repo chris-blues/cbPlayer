@@ -40,8 +40,8 @@ audio {
   display: none !important;
 }
 
-.cbPlayer_cbPlayer_mediacontrols_wrapper {
-  margin: 10px auto;
+.cbPlayer_mediacontrols_wrapper {
+  margin: 4px auto;
 }
 
 .cbPlayer_mediacontrols {
