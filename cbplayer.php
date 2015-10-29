@@ -2,7 +2,7 @@
 <?php
 $starttime = microtime(true);
 $version = "v0.04";
-$cbPlayer_dir = dirname($_SERVER["PHP_SELF"]);
+$cbPlayer_dir = dirname($_SERVER["PHP_SELF"]) . "cbplayer";
 
 require_once('getID3/getid3/getid3.php');
 $getID3 = new getID3;
