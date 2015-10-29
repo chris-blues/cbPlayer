@@ -2,9 +2,7 @@
 <?php
 $starttime = microtime(true);
 $version = "v0.04";
-
-$application = $_GET["media"]; // can be "audio" or "video" !!
-if ($application == "") $application = "audio";
+$cbPlayer_dir = dirname($_SERVER["PHP_SELF"]);
 
 require_once('getID3/getid3/getid3.php');
 $getID3 = new getID3;
@@ -128,7 +126,7 @@ foreach ($dir as $key => $filename)
    unset($ThisFileInfo);
   }
 ?>
-  <div id="cbPlayer_statusbar">Trying to download meta data...</div>
+  <div id="cbPlayer_statusbar"></div>
 <?php
 echo "  <div id=\"cbPlayer_mediaFiles\">\n";
 foreach ($files as $key => $id)
@@ -136,33 +134,41 @@ foreach ($files as $key => $id)
    if ($files[$key]["mediatype"] == "video") $mediatag = $files[$key]["mediatype"] . " width=\"100%\"";
      else $mediatag = $files[$key]["mediatype"];
 ?>
-     <<?php echo $mediatag; ?> class="cbPlayer_mediacontent" id="cbPlayer_<?php echo $files[$key]["id"]; ?>"
-        mediagroup="cbplayer"
-        preload="metadata"
-        onended="currentMediaId++; playMedia(currentMediaId);"
-        onloadstart="showMedia(<?php echo $files[$key]["id"]; ?>);"
-        onloadedmetadata="activateMedia(<?php echo $files[$key]["id"]; ?>);"
-        onprogress="finishMedia(<?php echo $files[$key]["id"]; ?>);"
-        oncanplaythrough="showMedia(<?php echo $files[$key]["id"]; ?>); activateMedia(<?php echo $files[$key]["id"]; ?>); finishMedia(<?php echo $files[$key]["id"]; ?>);"
-        data-artist="<?php echo $files[$key]["artist"]; ?>"
-        data-title="<?php echo $files[$key]["title"]; ?>"
-        data-album="<?php echo $files[$key]["album"]; ?>"
-        data-year="<?php echo $files[$key]["year"]; ?>"
-        data-filename="<?php echo rawurlencode($files[$key]["filename"]); ?>"
-        data-mediatype="<?php echo $files[$key]["mediatype"]; ?>">
+
+    <div id="cbPlayer_<?php echo $files[$key]["id"]; ?>"
+         class="cbPlayer_mediaContent"
+         data-preload="metadata"
+         data-onended="nextMedia();"
+         data-onloadstart="showMedia(<?php echo $files[$key]["id"]; ?>);"
+         data-onloadedmetadata="activateMedia(<?php echo $files[$key]["id"]; ?>);"
+         data-onprogress="finishMedia(<?php echo $files[$key]["id"]; ?>);"
+         data-oncanplaythrough="finishMedia(<?php echo $files[$key]["id"]; ?>);"
+         data-artist="<?php echo $files[$key]["artist"]; ?>"
+         data-title="<?php echo $files[$key]["title"]; ?>"
+         data-album="<?php echo $files[$key]["album"]; ?>"
+         data-year="<?php echo $files[$key]["year"]; ?>"
+         data-filename="<?php echo rawurlencode($files[$key]["filename"]); ?>"
+         data-mediatype="<?php echo $files[$key]["mediatype"]; ?>">
 <?php
    foreach ($files[$key]["type"] as $extkey => $ext)
      { ?>
-       <source src="<?php echo "$cbPlayer_dirname/" . rawurlencode($files[$key]["filename"]) . ".{$files[$key]["type"][$extkey]["ext"]}"; ?>" type="<?php echo $files[$key]["type"][$extkey]["mime"]; ?>" class="cbPlayer_<?php echo $files[$key]["id"]; ?>" id="cbPlayer_playlistItem_<?php echo $files[$key]["id"] . "_" . $files[$key]["type"][$extkey]["ext"]; ?>" data-filesize="<?php echo $files[$key]["type"][$extkey]["filesize"]; ?>" data-fileformat="<?php echo $files[$key]["type"][$extkey]["ext"]; ?>">
+         <div id="cbPlayer_playlistItem_<?php echo $files[$key]["id"] . "_" . $files[$key]["type"][$extkey]["ext"]; ?>"
+              class="cbPlayer_src_<?php echo $files[$key]["id"]; ?>"
+              data-src="<?php echo "$cbPlayer_dirname/" . rawurlencode($files[$key]["filename"]) . ".{$files[$key]["type"][$extkey]["ext"]}"; ?>"
+              data-type="<?php echo $files[$key]["type"][$extkey]["mime"]; ?>"
+              data-filesize="<?php echo $files[$key]["type"][$extkey]["filesize"]; ?>"
+              data-fileformat="<?php echo $files[$key]["type"][$extkey]["ext"]; ?>"></div>
 <?php
      } ?>
-     </<?php echo $files[$key]["mediatype"]; ?>>
-
+     </div>
 
 <?php
   }
-echo "</div>\n";
+echo "</div>\n"; ?>
 
+<div id="cbPlayer_media"></div>
+
+<?php
 echo " <div id=\"cbPlayer_playlist\"></div>\n";
 
 echo "<hr>\n";
@@ -176,16 +182,19 @@ echo "<hr>\n";
     </div>
 <div id="cbPlayer_leftSideBox">
   <div class="cbPlayer_mediacontrols_wrapper">
-    <a href="javascript:prevMedia();"><img id="cbPlayer_prev" class="cbPlayer_mediacontrols" src="/cbplayer/pics/rwd.png" alt="prev" title="prev"></a>
-    <a href="javascript:playMedia(currentMediaId);"><img id="cbPlayer_play" class="cbPlayer_mediacontrols" src="/cbplayer/pics/play.png" alt="play" title="play"></a>
-    <a href="javascript:stopMedia();" id="cbPlayer_stopButton"><img id="cbPlayer_stop" class="cbPlayer_mediacontrols" src="/cbplayer/pics/stop.png" alt="stop" title="stop"></a>
-    <a href="javascript:nextMedia();"><img id="cbPlayer_next" class="cbPlayer_mediacontrols" src="/cbplayer/pics/fwd.png" alt="next" title="next"></a>
-    <a class="cbPlayer_fullscreen" href="javascript:" onclick="var currentMedia = document.getElementById('cbPlayer_' + currentMediaId);
+    <a href="javascript:prevMedia();"><img id="cbPlayer_prev" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dir; ?>/pics/rwd.png" alt="prev" title="prev"></a>
+    <a href="javascript:playMedia(currentMediaId);"><img id="cbPlayer_play" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dir; ?>/pics/play.png" alt="play" title="play"></a>
+    <a href="javascript:pauseMedia(currentMediaId);"><img id="cbPlayer_pause" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dir; ?>/pics/pause.png" alt="pause" title="pause"></a>
+    <a href="javascript:stopMedia();" id="cbPlayer_stopButton"><img id="cbPlayer_stop" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dir; ?>/pics/stop.png" alt="stop" title="stop"></a>
+    <a href="javascript:nextMedia();"><img id="cbPlayer_next" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dir; ?>/pics/fwd.png" alt="next" title="next"></a>
+    <a class="cbPlayer_fullscreen" href="javascript:" onclick="var currentMedia = document.getElementById(currentMediaId);
      // go full-screen
      if (currentMedia.requestFullscreen) { currentMedia.requestFullscreen(); }
      else if (currentMedia.msRequestFullscreen) { currentMedia.msRequestFullscreen(); }
      else if (currentMedia.mozRequestFullScreen) { currentMedia.mozRequestFullScreen(); }
-     else if (currentMedia.webkitRequestFullscreen) { currentMedia.webkitRequestFullscreen(); }"><img id="cbPlayer_fullscreen" class="cbPlayer_mediacontrols cbPlayer_fullscreen" src="/cbplayer/pics/fullscreen.png" alt="fullscreen" title="fullscreen" style="display: none;"></a>
+     else if (currentMedia.webkitRequestFullscreen) { currentMedia.webkitRequestFullscreen(); }">
+       <img id="cbPlayer_fullscreen" class="cbPlayer_mediacontrols cbPlayer_fullscreen" src="<?php echo $cbPlayer_dir; ?>/pics/fullscreen.png" alt="fullscreen" title="fullscreen" style="display: none;">
+    </a>
   </div>
   <div id="cbPlayer_progressinfo">
     <span id="cbPlayer_mediaItems" class="cbPlayer_progressinfo"></span> <span id="cbPlayer_progress" class="cbPlayer_progressinfo">0:00 / 0:00</span>
@@ -204,67 +213,120 @@ echo "<hr>\n";
   </table>
 
 <script>
-  // =====================
-  // ==  Init cbplayer  ==
-  // ==================================================
-  // ==  Read all media items and create a playlist  ==
-  // ==================================================
-  if (typeof jQuery == 'undefined')
-    { var JQueryIsLoaded = false; }
-  else
-    { var JQueryIsLoaded = true; }
 
-  var currentMediaId = 0;
-  var notificationSwitch = 0;
-  var version = "<?php echo $version; ?>";
+// =====================
+// ==  Init cbplayer  ==
+// ==================================================
+// ==  Read all media items and create a playlist  ==
+// ==================================================
 
-  function showMedia(i)
-    {
-     var loadedMedia = document.getElementById("cbPlayer_playlistItemLink_" + i);
-     if (JQueryIsLoaded) $(loadedMedia).slideDown(500, function() { loadedMedia.style.display = "block"; });
-     else loadedMedia.style.display = "block";
-     if (notificationSwitch < 1)
-       {
-        document.getElementById("cbPlayer_status_" + i).innerHTML = "Downloading meta-data...";
-        notificationSwitch++;
-       }
-    }
+function initPlayer()
+  {
+   currentMediaId = 0;
+   version = "<?php echo $version; ?>";
+   cbPlayer_dir = "<?php echo $cbPlayer_dir; ?>";
+   mediaElements = document.getElementsByClassName("cbPlayer_mediaContent");
+   isPlaying = false;
+   isPaused = false;
 
-  function activateMedia(i)
-    {
-     var loadedMedia = document.getElementById("cbPlayer_playlistItemLink_" + i);
-     loadedMedia.style.display = "block";
-     loadedMedia.href = "javascript:playMedia(" + i + ");";
-     loadedMedia.style.color = "#555555";
-     document.getElementById("cbPlayer_status_" + i).innerHTML = "Loading media-data...";
-     document.getElementById("cbPlayer_artist").innerHTML = "Artist:";
-     document.getElementById("cbPlayer_title").innerHTML = "Title:";
-     document.getElementById("cbPlayer_album").innerHTML = "Album:";
-     document.getElementById("cbPlayer_download").innerHTML = "Download:";
-     document.getElementById("cbPlayer_leftSideBox").style.display = "block";
-     if (notificationSwitch < 2)
-       {
-        document.getElementById("cbPlayer_statusbar").innerHTML = "Some files may be ready to play.";
-        notificationSwitch++;
-       }
-    }
+   createPlaylist();
+   //createMediaItem(currentMediaId);
+  }
 
-  function finishMedia(i)
-    {
-     var loadedMedia = document.getElementById("cbPlayer_playlistItemLink_" + i);
-     loadedMedia.style.display = "block";
-     loadedMedia.style.color = "#000000";
-     document.getElementById("cbPlayer_status_" + i).innerHTML = "";
-     document.getElementById("cbPlayer_status_" + i).style.display = "none";
-     if (notificationSwitch < 3)
-       {
-        document.getElementById("cbPlayer_statusbar").innerHTML = "cbPlayer " + version;
-        document.getElementById("cbPlayer_statusbar").style.display = "none";
-        notificationSwitch++;
-       }
-    }
+// =======================
+// ==  Create Playlist  ==
+// =======================
+function createPlaylist()
+  {
+   for (var i = 0; i < mediaElements.length; i++)
+     {
+        var a = document.createElement("a"); // create Link - non-clickable yet, until we have the necessary data downloaded!
+        a.className = "cbPlayer_playlistitem";
+        a.id = "cbPlayer_playlistItemLink_" + i;
+        a.href = "javascript:playMedia(" + i + ");";
 
-  function activateMediaControl(cbplayerControllerId)
+        var div = document.createElement("div");
+        div.id = i + "_" + mediaElements[i].getAttribute("data-filename");
+        div.className = "cbPlayer_playlist " + i;
+
+        var img = document.createElement("img");
+        img.className = "mediaIcon";
+        img.src = cbPlayer_dir + "/pics/" + mediaElements[i].getAttribute("data-mediatype") + ".png";
+        div.appendChild(img);
+
+        var span = document.createElement("span"); // for status display
+        span.id = "cbPlayer_status_" + i;
+        span.className = "cbPlayer_statusfield";
+        div.appendChild(span);
+
+        var textnode = document.createTextNode(mediaElements[i].getAttribute("data-artist") + ' - ' + mediaElements[i].getAttribute("data-title"));
+        div.appendChild(textnode);
+
+        a.appendChild(div);
+        var parent = document.getElementById("cbPlayer_playlist");
+        parent.appendChild(a);
+
+        if (mediaElements.readyState > 0) showMedia(i);
+        if (mediaElements.readyState > 2) activateMedia(i);
+        if (mediaElements.readyState > 3) finishMedia(i);
+     }
+
+// =======================================
+// ==  create controller and infoboxes  ==
+// =======================================
+   document.getElementById("cbPlayer_progressbar").style.display = "block";
+   document.getElementById("cbPlayer_mediaItems").innerHTML = currentMediaId + 1 + "/" + mediaElements.length;
+   document.getElementById("cbPlayer_leftSideBox").style.display = "block";
+   document.getElementById("cbPlayer_artist").innerHTML = "Artist:";
+   document.getElementById("cbPlayer_title").innerHTML = "Title:";
+   document.getElementById("cbPlayer_album").innerHTML = "Album:";
+   document.getElementById("cbPlayer_download").innerHTML = "Download:";
+  }
+
+function createMediaItem(i)
+  {
+   mediaDiv = document.getElementById("cbPlayer_media");
+   while (mediaDiv.hasChildNodes())
+     {
+      mediaDiv.removeChild(mediaDiv.firstChild);
+     }
+   var currentMedia = document.getElementById("cbPlayer_" + i);
+   var currentMediaType = currentMedia.getAttribute("data-mediatype");
+   var media = document.createElement(currentMediaType);
+   media.className = "cbPlayer_mediaContent";
+   media.id = i;
+   media.preload = "metadata";
+   media.controls = false;
+   media.onended = function() { nextMedia() };
+
+   var currentMediaSources = document.getElementsByClassName("cbPlayer_src_" + i);
+   for (var sources = 0; sources < currentMediaSources.length; sources++)
+     {
+      var currentMediaSource = document.createElement("source");
+      currentMediaSource.className = "cbPlayer_mediaSources_" + i;
+      currentMediaSource.id = "cbPlayer_playlistItem_" + i + "_" + currentMediaSources[sources].getAttribute("data-fileformat");
+      currentMediaSource.src = currentMediaSources[sources].getAttribute("data-src");
+      currentMediaSource.type = currentMediaSources[sources].getAttribute("data-type");
+      media.appendChild(currentMediaSource);
+     }
+
+   var parent = document.getElementById("cbPlayer_media");
+   parent.appendChild(media);
+   document.getElementById(i).load();
+  }
+
+function cancelPrevMedia()
+  {
+   var currentlyPlaying = document.getElementById(currentMediaId);
+   var mediaSources = document.getElementsByClassName("cbPlayer_mediaSources_" + currentMediaId);
+   for (var i = 0; i < mediaSources.length; i++)
+     {
+      mediaSources[i].src = "";
+     }
+   currentlyPlaying.load();
+  }
+
+function activateMediaControl(cbplayerControllerId)
     {
      var cbplayerController = document.getElementsByClassName("cbPlayer_mediacontrols");
      var controllerButton = document.getElementById("cbPlayer_" + cbplayerControllerId);
@@ -278,66 +340,88 @@ echo "<hr>\n";
      controllerButton.style.boxShadow = "0px 0px 2px 1px #CCC";
      if (cbplayerControllerId == "play")
        {
-        document.getElementById("cbPlayer_play").src = "/cbplayer/pics/play_active.png";
-        document.getElementById("cbPlayer_stop").src = "/cbplayer/pics/stop.png";
+        document.getElementById("cbPlayer_play").src = cbPlayer_dir + "/pics/play_active.png";
+        document.getElementById("cbPlayer_pause").src = cbPlayer_dir + "/pics/pause.png";
+        document.getElementById("cbPlayer_stop").src = cbPlayer_dir + "/pics/stop.png";
        }
      if (cbplayerControllerId == "stop")
        {
-        document.getElementById("cbPlayer_play").src = "/cbplayer/pics/play.png";
-        document.getElementById("cbPlayer_stop").src = "/cbplayer/pics/stop_active.png";
+        document.getElementById("cbPlayer_play").src = cbPlayer_dir + "/pics/play.png";
+        document.getElementById("cbPlayer_pause").src = cbPlayer_dir + "/pics/pause.png";
+        document.getElementById("cbPlayer_stop").src = cbPlayer_dir + "/pics/stop_active.png";
+       }
+     if (cbplayerControllerId == "pause")
+       {
+        document.getElementById("cbPlayer_play").src = cbPlayer_dir + "/pics/play.png";
+        document.getElementById("cbPlayer_pause").src = cbPlayer_dir + "/pics/pause_active.png";
+        document.getElementById("cbPlayer_stop").src = cbPlayer_dir + "/pics/stop.png";
        }
 
-
-     for (var i = 0; i < mediaElements.length; i++)
-       {
-        mediaElements[i].removeAttribute("style");
-       }
-     if (currentMediaId >= mediaElements.length)
-       {
-        currentMediaId = 0;
+     if (cbplayerControllerId != "pause")
+          {
         for (var i = 0; i < mediaElements.length; i++)
           {
-           mediaElements[i].pause();
-           mediaElements[i].currentTime = 0;
+           mediaElements[i].removeAttribute("style");
           }
-       }
-     var playlist = document.getElementsByClassName("cbPlayer_playlist");
-     for (var i = 0; i < playlist.length; i++)
-       {
-        playlist[i].removeAttribute("style");
-       }
-     playlist[currentMediaId].style.backgroundColor = "#E6CC99";
-     var mediatype = document.getElementById("cbPlayer_" + currentMediaId).getAttribute("data-mediatype");
-     if (mediatype == "video")
-       {
-        document.getElementById("cbPlayer_playlist").style.display = "none";
-        document.getElementById("cbPlayer_fullscreen").removeAttribute("style");
-       }
-     else
-       {
-        document.getElementById("cbPlayer_playlist").removeAttribute("style");
-        document.getElementById("cbPlayer_fullscreen").style.display = "none";
+        if (currentMediaId >= mediaElements.length)
+          {
+           currentMediaId = 0;
+           for (var i = 0; i < mediaElements.length; i++)
+             {
+              mediaElements[i].pause();
+              mediaElements[i].currentTime = 0;
+             }
+          }
+        var playlist = document.getElementsByClassName("cbPlayer_playlist");
+        for (var i = 0; i < playlist.length; i++)
+          {
+           playlist[i].removeAttribute("style");
+          }
+        playlist[currentMediaId].style.backgroundColor = "#E6CC99";
+        var mediatype = document.getElementById("cbPlayer_" + currentMediaId).getAttribute("data-mediatype");
+
+        if (mediatype == "video")
+          {
+           document.getElementById("cbPlayer_playlist").style.display = "none";
+           document.getElementById("cbPlayer_fullscreen").removeAttribute("style");
+          }
+        else
+          {
+           document.getElementById("cbPlayer_playlist").removeAttribute("style");
+           document.getElementById("cbPlayer_fullscreen").style.display = "none";
+          }
        }
     }
 
-  function secs2minSecs(time)
+function secs2minSecs(time)
     {
      var minutes = Math.floor(time / 60);
      var seconds = "0" + (time - minutes * 60);
      return minutes + ":" + seconds.substr(-2);
     }
 
-  function prevMedia()
+function prevMedia()
     {
-     stopMedia();
+     if (isPlaying == true) { stopMedia(); }
      currentMediaId--;
      if (currentMediaId < 0) { currentMediaId = 0; }
      playMedia(currentMediaId);
     }
 
-  function playMedia(MediaId)
+function playMedia(MediaId)
     {
-     stopMedia();
+     if (isPlaying == true)
+       {
+        if (isPaused != true)
+          {
+           stopMedia();
+          }
+       }
+     if (isPaused != true)
+       {
+        createMediaItem(MediaId);
+       }
+
      var anchors = document.getElementsByTagName("a");
      for (var i = 0; i < anchors.length; i++) { anchors[i].blur(); }
 
@@ -359,32 +443,34 @@ echo "<hr>\n";
 
      activateMediaControl("play");
 
-     document.getElementById("cbPlayer_" + currentMediaId).style.display = "block";
-     document.getElementById("cbPlayer_" + currentMediaId).play();
+     document.getElementById(currentMediaId).style.display = "block";
+     document.getElementById(currentMediaId).play();
+     isPlaying = true;
+     isPaused = false;
 
      document.getElementById("cbPlayer_mediaItems").innerHTML = currentMediaId + 1 + "/" + mediaElements.length;
-     var currentMedia = document.getElementById("cbPlayer_" + currentMediaId);
-     var duration = Math.floor(currentMedia.duration);
-     duration = secs2minSecs(duration);
-     document.getElementById("cbPlayer_currentTitle").innerHTML = currentMedia.getAttribute("data-title");
-     document.getElementById("cbPlayer_currentArtist").innerHTML = currentMedia.getAttribute("data-artist");
+     var currentMedia = document.getElementById(currentMediaId);
+     var currentMediaData = document.getElementById("cbPlayer_" + currentMediaId);
+
+     document.getElementById("cbPlayer_currentTitle").innerHTML = currentMediaData.getAttribute("data-title");
+     document.getElementById("cbPlayer_currentArtist").innerHTML = currentMediaData.getAttribute("data-artist");
      if (currentMedia.getAttribute("data-year") != "")
        {
-        document.getElementById("cbPlayer_currentAlbum").innerHTML = currentMedia.getAttribute("data-album") + " (" + currentMedia.getAttribute("data-year") + ")";
+        document.getElementById("cbPlayer_currentAlbum").innerHTML = currentMediaData.getAttribute("data-album") + " (" + currentMediaData.getAttribute("data-year") + ")";
        }
      else
        {
-        document.getElementById("cbPlayer_currentAlbum").innerHTML = currentMedia.getAttribute("data-album");
+        document.getElementById("cbPlayer_currentAlbum").innerHTML = currentMediaData.getAttribute("data-album");
        }
-     var downloads = document.getElementsByClassName("cbPlayer_" + currentMediaId);
+     var downloads = document.getElementsByClassName("cbPlayer_src_" + currentMediaId);
         document.getElementById("cbPlayer_currentDownload").innerHTML = "";
      for (var i = 0; i < downloads.length; i++)
        {
         a = document.createElement("a");
         a.class = "cbPlayer_downloadLink";
-        a.href = downloads[i].getAttribute("src");
-        a.download = currentMedia.getAttribute("data-artist") + " - " + currentMedia.getAttribute("data-title") + "." + downloads[i].getAttribute("data-fileformat");
-        a.text = downloads[i].getAttribute("type");
+        a.href = downloads[i].getAttribute("data-src");
+        a.download = currentMediaData.getAttribute("data-artist") + " - " + currentMediaData.getAttribute("data-title") + "." + downloads[i].getAttribute("data-fileformat");
+        a.text = downloads[i].getAttribute("data-type");
         document.getElementById("cbPlayer_currentDownload").appendChild(a);
         var filesize = downloads[i].getAttribute("data-filesize") / 1024 / 1024;
         var shortenedFilesize = Math.round(filesize * 100) / 100;
@@ -395,6 +481,10 @@ echo "<hr>\n";
 
      function updateTime()
        {
+        var currentMediaData = document.getElementById("cbPlayer_" + currentMediaId);
+        var mediaDuration = Math.floor(currentMedia.duration);
+        var duration = secs2minSecs(mediaDuration);
+
         position = Math.floor(currentMedia.currentTime);
         prettyTime = secs2minSecs(position);
         document.getElementById("cbPlayer_progress").innerHTML = prettyTime + " / " + duration;
@@ -404,105 +494,76 @@ echo "<hr>\n";
        }
     }
 
-  function stopMedia()
-    {
-     activateMediaControl("stop");
-     document.getElementById("cbPlayer_stopButton").blur();
-     for (var i = 0; i < mediaElements.length; i++)
-       {
-        if (mediaElements[i].readyState < 1) { return; }
-        else
-          {
-           mediaElements[i].pause();
-           mediaElements[i].currentTime = 0;
-          }
-       }
-     document.getElementById("cbPlayer_playlist").removeAttribute("style");
-     document.getElementById("cbPlayer_fullscreen").style.display = "none";
+function stopMedia()
+  {
+   activateMediaControl("stop");
+   document.getElementById("cbPlayer_stopButton").blur();
+   if (isPlaying == true)
+     {
+      var currentlyPlaying = document.getElementById(currentMediaId);
+      currentlyPlaying.pause();
+      currentlyPlaying.currentTime = 0;
+      cancelPrevMedia();
+     }
+   isPlaying = false;
 
-     // exit full-screen
-     if (document.exitFullscreen) { document.exitFullscreen(); }
-     else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
-     else if (document.mozCancelFullScreen) { document.mozCancelFullScreen(); }
-     else if (document.msExitFullscreen) { document.msExitFullscreen(); }
-    }
+   document.getElementById("cbPlayer_playlist").removeAttribute("style");
+   document.getElementById("cbPlayer_fullscreen").style.display = "none";
 
-  function nextMedia()
+   // exit full-screen
+   if (document.exitFullscreen) { document.exitFullscreen(); }
+   else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
+   else if (document.mozCancelFullScreen) { document.mozCancelFullScreen(); }
+   else if (document.msExitFullscreen) { document.msExitFullscreen(); }
+   currentMedia.controls = false;
+  }
+
+function pauseMedia()
+  {
+   activateMediaControl("pause");
+   document.getElementById("cbPlayer_pause").blur();
+   if (isPlaying == true)
+     {
+      document.getElementById(currentMediaId).pause();
+      isPaused = true;
+     }
+  }
+
+function nextMedia()
     {
-     stopMedia();
+     if (isPlaying == true) { stopMedia(); }
      currentMediaId++;
      playMedia(currentMediaId);
     }
 
-  function fullscreen()
+function fullscreen()
     {
      document.getElementById("cbPlayer_fullscreen").blur();
-     var currentMedia = document.getElementById("cbPlayer_" + currentMediaId);
+     var currentMedia = document.getElementById(currentMediaId);
      // go full-screen
      if (currentMedia.requestFullscreen) { currentMedia.requestFullscreen(); }
      else if (currentMedia.msRequestFullscreen) { currentMedia.msRequestFullscreen(); }
      else if (currentMedia.mozRequestFullScreen) { currentMedia.mozRequestFullScreen(); }
      else if (currentMedia.webkitRequestFullscreen) { currentMedia.webkitRequestFullscreen(); }
+     currentMedia.controls = true;
     }
 
-  function getCursorPosition(event)
+function getCursorPosition(event)
     {
-     var currentMedia = document.getElementById("cbPlayer_" + currentMediaId);
+     var currentMedia = document.getElementById(currentMediaId);
      var pb = document.getElementById("cbPlayer_progressbar");
      var rect = pb.getBoundingClientRect();
      var x = event.clientX - rect.left;
      currentMedia.currentTime = (currentMedia.duration * x) / rect.width;
     }
 
-  // =======================
-  // ==  Create Playlist  ==
-  // =======================
-  var mediaElements = document.getElementsByClassName("cbPlayer_mediacontent");
-  for (var i = 0; i < mediaElements.length; i++)
-    {
-        var a = document.createElement("a"); // create Link - non-clickable yet, until we have the necessary data downloaded!
-        a.className = "cbPlayer_playlistitem";
-        a.id = "cbPlayer_playlistItemLink_" + i;
-        a.style.display = "none";
-
-        var div = document.createElement("div");
-        div.id = i + "_" + mediaElements[i].getAttribute("data-filename");
-        div.className = "cbPlayer_playlist " + i;
-
-        var img = document.createElement("img");
-        img.className = "mediaIcon";
-        img.src = "cbplayer/pics/" + mediaElements[i].getAttribute("data-mediatype") + ".png";
-        div.appendChild(img);
-
-        var span = document.createElement("span"); // for status display
-        span.id = "cbPlayer_status_" + i;
-        span.className = "cbPlayer_statusfield";
-        div.appendChild(span);
-
-        var linkname = mediaElements[i].getAttribute("data-artist") + ' - ' + mediaElements[i].getAttribute("data-title");
-        var textnode = document.createTextNode(linkname);
-        div.appendChild(textnode);
-
-        a.appendChild(div);
-        var parent = document.getElementById("cbPlayer_playlist");
-        parent.appendChild(a);
-
-        if (mediaElements.readyState > 0) showMedia(i);
-        if (mediaElements.readyState > 3) activateMedia(i);
-    }
-  document.getElementById("cbPlayer_progressbar").style.display = "block";
-  document.getElementById("cbPlayer_mediaItems").innerHTML = currentMediaId + 1 + "/" + mediaElements.length;
-  document.getElementById("cbPlayer_leftSideBox").style.display = "block";
-  document.getElementById("cbPlayer_artist").innerHTML = "Artist:";
-  document.getElementById("cbPlayer_title").innerHTML = "Title:";
-  document.getElementById("cbPlayer_album").innerHTML = "Album:";
-  document.getElementById("cbPlayer_download").innerHTML = "Download:";
+initPlayer();
 
 </script>
 <noscript>Dieser Medienplayer benötigt JavaScript um zu funktionieren. Dazu müssen Sie JavaScript aktivieren.</noscript>
 </div>
 <?php
 $endtime = microtime(true);
-//echo "<p id=\"footer\" style=\"font-size: 0.7em; text-align: center;\">Processing needed " . number_format($endtime - $starttime, 3) . " seconds.</p>\n";
+echo "<p id=\"footer\" style=\"font-size: 0.7em; text-align: center;\">Processing needed " . number_format($endtime - $starttime, 3) . " seconds.</p>\n";
 //echo "<pre>"; print_r($files); echo "</pre>\n";
 ?>

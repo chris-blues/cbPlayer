@@ -1,8 +1,11 @@
 <?php include("head.php"); ?>
 
-<div style="width: 600px; margin: 10px auto;">
+<div style="width: 800px; margin: 10px auto;">
 
-<?php include("cbplayer.php"); ?>
+<?php
+  $cbPlayer_dirname = "../../content/media";
+  include("cbplayer.php");
+?>
 
 </div>
 

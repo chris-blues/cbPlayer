@@ -14,8 +14,13 @@
 
 .cbPlayer_playlistitem {
   text-decoration: none !important;
-  color: #AAAAAA;
+  color: #000000;
   display: block;
+}
+
+video {
+  width: 100%;
+  display: none;
 }
 
 .mediaIcon {
@@ -30,14 +35,6 @@
   font-size: 0.75em;
   font-weight: bold;
   color: red;
-}
-
-.cbPlayer_mediacontent {
-  display: none;
-}
-
-audio {
-  display: none !important;
 }
 
 .cbPlayer_mediacontrols_wrapper {
