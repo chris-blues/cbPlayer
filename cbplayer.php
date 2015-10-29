@@ -1,18 +1,23 @@
+<?php
+// ====================================================
+// ==  copyright: chris_blues <chris@musicchris.de>  ==
+// ==     released under GPL-3 public license        ==
+// ==   see LICENSE in top directory for details     ==
+// ====================================================
+?>
+
 <div id="cbplayer">
 <?php
 $starttime = microtime(true);
 $version = "v0.04";
-$cbPlayer_dir = dirname($_SERVER["PHP_SELF"]) . "cbplayer";
 
 require_once('getID3/getid3/getid3.php');
 $getID3 = new getID3;
 
-//$cbPlayer_dirname = "media";
-
 $search = array("ä", "Ä", "ö", "Ö", "ü", "Ü", "ß", "&", "+", "'", ", ", " ", ",", "__", "__");
 $replace = array("ae", "Ae", "oe", "Oe", "ue", "Ue", "ss", "_", "_", "", "_", "_", "_", "_", "_");
 
-$dir = scandir($cbPlayer_dirname);
+$dir = scandir($cbPlayer_mediadir);
 $counter = -1;
 
 foreach ($dir as $key => $filename)
@@ -21,7 +26,7 @@ foreach ($dir as $key => $filename)
 
    $oldfilename = $filename;
    $filename = str_replace($search, $replace, $filename);
-   if (strcmp($filename, $oldfilename) != 0) rename("$cbPlayer_dirname/$oldfilename", "$cbPlayer_dirname/$filename");
+   if (strcmp($filename, $oldfilename) != 0) rename("$cbPlayer_mediadir/$oldfilename", "$cbPlayer_mediadir/$filename");
    unset ($oldfilename);
    $dir[$key] = $filename;
    $lastname = $name;
@@ -31,7 +36,7 @@ foreach ($dir as $key => $filename)
  // quick and dirty workaround for 4-letter extension "webm"
    if ($ext == "ebm") { $ext = "webm"; $name = substr($name, 0, -1); }
 
-   $fullname = "$cbPlayer_dirname/$filename";
+   $fullname = "$cbPlayer_mediadir/$filename";
 
    // check if this file is usable, skip if not!
    $supported_filetypes = array("mp3", "ogg", "mp4", "oga", "ogv", "webm");
@@ -154,7 +159,7 @@ foreach ($files as $key => $id)
      { ?>
          <div id="cbPlayer_playlistItem_<?php echo $files[$key]["id"] . "_" . $files[$key]["type"][$extkey]["ext"]; ?>"
               class="cbPlayer_src_<?php echo $files[$key]["id"]; ?>"
-              data-src="<?php echo "$cbPlayer_dirname/" . rawurlencode($files[$key]["filename"]) . ".{$files[$key]["type"][$extkey]["ext"]}"; ?>"
+              data-src="<?php echo "$cbPlayer_mediadir/" . rawurlencode($files[$key]["filename"]) . ".{$files[$key]["type"][$extkey]["ext"]}"; ?>"
               data-type="<?php echo $files[$key]["type"][$extkey]["mime"]; ?>"
               data-filesize="<?php echo $files[$key]["type"][$extkey]["filesize"]; ?>"
               data-fileformat="<?php echo $files[$key]["type"][$extkey]["ext"]; ?>"></div>
@@ -182,18 +187,18 @@ echo "<hr>\n";
     </div>
 <div id="cbPlayer_leftSideBox">
   <div class="cbPlayer_mediacontrols_wrapper">
-    <a href="javascript:prevMedia();"><img id="cbPlayer_prev" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dir; ?>/pics/rwd.png" alt="prev" title="prev"></a>
-    <a href="javascript:playMedia(currentMediaId);"><img id="cbPlayer_play" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dir; ?>/pics/play.png" alt="play" title="play"></a>
-    <a href="javascript:pauseMedia(currentMediaId);"><img id="cbPlayer_pause" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dir; ?>/pics/pause.png" alt="pause" title="pause"></a>
-    <a href="javascript:stopMedia();" id="cbPlayer_stopButton"><img id="cbPlayer_stop" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dir; ?>/pics/stop.png" alt="stop" title="stop"></a>
-    <a href="javascript:nextMedia();"><img id="cbPlayer_next" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dir; ?>/pics/fwd.png" alt="next" title="next"></a>
+    <a href="javascript:prevMedia();"><img id="cbPlayer_prev" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/rwd.png" alt="prev" title="prev"></a>
+    <a href="javascript:playMedia(currentMediaId);"><img id="cbPlayer_play" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/play.png" alt="play" title="play"></a>
+    <a href="javascript:pauseMedia(currentMediaId);"><img id="cbPlayer_pause" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/pause.png" alt="pause" title="pause"></a>
+    <a href="javascript:stopMedia();" id="cbPlayer_stopButton"><img id="cbPlayer_stop" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/stop.png" alt="stop" title="stop"></a>
+    <a href="javascript:nextMedia();"><img id="cbPlayer_next" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/fwd.png" alt="next" title="next"></a>
     <a class="cbPlayer_fullscreen" href="javascript:" onclick="var currentMedia = document.getElementById(currentMediaId);
      // go full-screen
      if (currentMedia.requestFullscreen) { currentMedia.requestFullscreen(); }
      else if (currentMedia.msRequestFullscreen) { currentMedia.msRequestFullscreen(); }
      else if (currentMedia.mozRequestFullScreen) { currentMedia.mozRequestFullScreen(); }
      else if (currentMedia.webkitRequestFullscreen) { currentMedia.webkitRequestFullscreen(); }">
-       <img id="cbPlayer_fullscreen" class="cbPlayer_mediacontrols cbPlayer_fullscreen" src="<?php echo $cbPlayer_dir; ?>/pics/fullscreen.png" alt="fullscreen" title="fullscreen" style="display: none;">
+       <img id="cbPlayer_fullscreen" class="cbPlayer_mediacontrols cbPlayer_fullscreen" src="<?php echo $cbPlayer_dirname; ?>/pics/fullscreen.png" alt="fullscreen" title="fullscreen" style="display: none;">
     </a>
   </div>
   <div id="cbPlayer_progressinfo">
@@ -224,7 +229,7 @@ function initPlayer()
   {
    currentMediaId = 0;
    version = "<?php echo $version; ?>";
-   cbPlayer_dir = "<?php echo $cbPlayer_dir; ?>";
+   cbPlayer_dir = "<?php echo $cbPlayer_dirname; ?>";
    mediaElements = document.getElementsByClassName("cbPlayer_mediaContent");
    isPlaying = false;
    isPaused = false;
@@ -288,7 +293,7 @@ function createMediaItem(i)
    var currentMedia = document.getElementById("cbPlayer_" + i);
    var currentMediaType = currentMedia.getAttribute("data-mediatype");
    var media = document.createElement(currentMediaType);
-   media.className = "cbPlayer_mediaContent";
+   media.className = "cbPlayer_mediaElement";
    media.id = i;
    media.preload = "metadata";
    media.controls = false;
@@ -438,7 +443,10 @@ function playMedia(MediaId)
 
      activateMediaControl("play");
 
-     document.getElementById(currentMediaId).style.display = "block";
+     if (document.getElementById("cbPlayer_" + currentMediaId).getAttribute("data-mediatype") == "video")
+       {
+        document.getElementById(currentMediaId).style.display = "block";
+       }
      document.getElementById(currentMediaId).play();
      isPlaying = true;
      isPaused = false;
@@ -501,9 +509,11 @@ function stopMedia()
       cancelPrevMedia();
      }
    isPlaying = false;
+   isPaused = false;
 
    document.getElementById("cbPlayer_playlist").removeAttribute("style");
    document.getElementById("cbPlayer_fullscreen").style.display = "none";
+   document.getElementById(currentMediaId).removeAttribute("style");
 
    // exit full-screen
    if (document.exitFullscreen) { document.exitFullscreen(); }
@@ -559,6 +569,6 @@ initPlayer();
 </div>
 <?php
 $endtime = microtime(true);
-echo "<p id=\"footer\" style=\"font-size: 0.7em; text-align: center;\">Processing needed " . number_format($endtime - $starttime, 3) . " seconds.</p>\n";
+//echo "<p id=\"footer\" style=\"font-size: 0.7em; text-align: center;\">Processing needed " . number_format($endtime - $starttime, 3) . " seconds.</p>\n";
 //echo "<pre>"; print_r($files); echo "</pre>\n";
 ?>

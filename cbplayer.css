@@ -18,7 +18,7 @@
   display: block;
 }
 
-video {
+audio, video {
   width: 100%;
   display: none;
 }
