@@ -8,7 +8,7 @@
   <!--link rel="stylesheet" href="https://musicchris.de/musicchris.css" type="text/css"-->
   <link rel="stylesheet" href="cbplayer.css" type="text/css">
   <!--script type="text/javascript" src="/js/jquery-2.1.4.min.js"></script-->
-  <title>musicchris.de - baustelle - cbPlayer</title>
+  <title>cbPlayer - demo</title>
 </head>
 <body>
-<h1 style="margin: 10px auto; text-align: center;">cbplayer Demo / Baustelle</h1>
+<h1 style="margin: 10px auto; text-align: center;">cbplayer Demo</h1>
