@@ -515,7 +515,7 @@ function stopMedia()
    else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
    else if (document.mozCancelFullScreen) { document.mozCancelFullScreen(); }
    else if (document.msExitFullscreen) { document.msExitFullscreen(); }
-   currentMedia.controls = false;
+   document.getElementById(currentMediaId).controls = false;
   }
 
 function pauseMedia()
