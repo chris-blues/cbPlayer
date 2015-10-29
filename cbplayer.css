@@ -29,14 +29,6 @@ video {
   margin-right: 7px;
 }
 
-.cbPlayer_statusfield {
-  background-color: #EEEEEE;
-  margin-right: 30px;
-  font-size: 0.75em;
-  font-weight: bold;
-  color: red;
-}
-
 .cbPlayer_mediacontrols_wrapper {
   margin: 4px auto;
 }

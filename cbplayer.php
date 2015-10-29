@@ -254,11 +254,6 @@ function createPlaylist()
         img.src = cbPlayer_dir + "/pics/" + mediaElements[i].getAttribute("data-mediatype") + ".png";
         div.appendChild(img);
 
-        var span = document.createElement("span"); // for status display
-        span.id = "cbPlayer_status_" + i;
-        span.className = "cbPlayer_statusfield";
-        div.appendChild(span);
-
         var textnode = document.createTextNode(mediaElements[i].getAttribute("data-artist") + ' - ' + mediaElements[i].getAttribute("data-title"));
         div.appendChild(textnode);
 
