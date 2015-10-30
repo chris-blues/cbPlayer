@@ -9,7 +9,7 @@
 <div id="cbplayer">
 <?php
 $starttime = microtime(true);
-$version = "v0.04";
+$version = "v0.06";
 
 require_once('getID3/getid3/getid3.php');
 $getID3 = new getID3;
