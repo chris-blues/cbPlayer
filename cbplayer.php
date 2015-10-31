@@ -205,7 +205,7 @@ echo "<hr>\n";
     <span id="cbPlayer_mediaItems" class="cbPlayer_progressinfo"></span> <span id="cbPlayer_progress" class="cbPlayer_progressinfo">0:00 / 0:00</span>
   </div>
   <div id="cbPlayer_progInfo">
-    cbPlayer <?php echo $version; ?>
+    <a href="https://github.com/chris-blues/cbPlayer" target="_blank">cbPlayer <?php echo $version; ?></a>
   </div>
 </div>
   <table id="cbPlayer_infobox">
@@ -545,12 +545,16 @@ function fullscreen()
     {
      document.getElementById("cbPlayer_fullscreen").blur();
      var currentMedia = document.getElementById(currentMediaId);
+
+     currentMedia.removeAttribute("controls");
+     currentMedia.controls = true;
+     currentMedia.setAttribute("controls","controls");
+
      // go full-screen
      if (currentMedia.requestFullscreen) { currentMedia.requestFullscreen(); }
      else if (currentMedia.msRequestFullscreen) { currentMedia.msRequestFullscreen(); }
      else if (currentMedia.mozRequestFullScreen) { currentMedia.mozRequestFullScreen(); }
      else if (currentMedia.webkitRequestFullscreen) { currentMedia.webkitRequestFullscreen(); }
-     currentMedia.controls = true;
     }
 
 function getCursorPosition(event)
