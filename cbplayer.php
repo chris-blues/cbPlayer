@@ -39,7 +39,7 @@ foreach ($dir as $key => $filename)
    $fullname = "$cbPlayer_mediadir/$filename";
 
    // check if this file is usable, skip if not!
-   $supported_filetypes = array("mp3", "ogg", "mp4", "oga", "ogv", "webm");
+   $supported_filetypes = array("mp3", "mp4", "ogg", "oga", "ogv", "webm");
    foreach ($supported_filetypes as $typenum => $filetype)
      {
       if (strcasecmp($ext,$filetype) == 0) $supported = TRUE;
@@ -192,12 +192,7 @@ echo "<hr>\n";
     <a href="javascript:pauseMedia(currentMediaId);"><img id="cbPlayer_pause" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/pause.png" alt="pause" title="pause"></a>
     <a href="javascript:stopMedia();" id="cbPlayer_stopButton"><img id="cbPlayer_stop" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/stop.png" alt="stop" title="stop"></a>
     <a href="javascript:nextMedia();"><img id="cbPlayer_next" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/fwd.png" alt="next" title="next"></a>
-    <a class="cbPlayer_fullscreen" href="javascript:" onclick="var currentMedia = document.getElementById(currentMediaId);
-     // go full-screen
-     if (currentMedia.requestFullscreen) { currentMedia.requestFullscreen(); }
-     else if (currentMedia.msRequestFullscreen) { currentMedia.msRequestFullscreen(); }
-     else if (currentMedia.mozRequestFullScreen) { currentMedia.mozRequestFullScreen(); }
-     else if (currentMedia.webkitRequestFullscreen) { currentMedia.webkitRequestFullscreen(); }">
+    <a class="cbPlayer_fullscreen" href="javascript:fullscreen();" onclick="fullscreen();">
        <img id="cbPlayer_fullscreen" class="cbPlayer_mediacontrols cbPlayer_fullscreen" src="<?php echo $cbPlayer_dirname; ?>/pics/fullscreen.png" alt="fullscreen" title="fullscreen" style="display: none;">
     </a>
   </div>
@@ -234,8 +229,11 @@ function initPlayer()
    isPlaying = false;
    isPaused = false;
 
+   addEventListener("mozfullscreenchange",function(){ trackFullScreen(); }, false);
+   addEventListener("webkitfullscreenchange",function(){ trackFullScreen(); }, false);
+   addEventListener("msfullscreenchange",function(){ trackFullScreen(); }, false);
+
    createPlaylist();
-   //createMediaItem(currentMediaId);
   }
 
 // =======================
@@ -520,7 +518,7 @@ function stopMedia()
    else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
    else if (document.mozCancelFullScreen) { document.mozCancelFullScreen(); }
    else if (document.msExitFullscreen) { document.msExitFullscreen(); }
-   currentMedia.removeAttribute("controls");
+   document.getElementById(currentMediaId).controls = false;
   }
 
 function pauseMedia()
@@ -546,15 +544,22 @@ function fullscreen()
      document.getElementById("cbPlayer_fullscreen").blur();
      var currentMedia = document.getElementById(currentMediaId);
 
-     currentMedia.removeAttribute("controls");
-     //currentMedia.controls = true;
-     currentMedia.setAttribute("controls","controls");
+     currentMedia.controls = true;
 
      // go full-screen
      if (currentMedia.requestFullscreen) { currentMedia.requestFullscreen(); }
      else if (currentMedia.msRequestFullscreen) { currentMedia.msRequestFullscreen(); }
      else if (currentMedia.mozRequestFullScreen) { currentMedia.mozRequestFullScreen(); }
      else if (currentMedia.webkitRequestFullscreen) { currentMedia.webkitRequestFullscreen(); }
+    }
+    
+function trackFullScreen()
+    {
+     // are we full-screen?
+     if ( document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement )
+         { document.getElementById(currentMediaId).controls = true; }
+     else
+         { document.getElementById(currentMediaId).controls = false; }
     }
 
 function getCursorPosition(event)
