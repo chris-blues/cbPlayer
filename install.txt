@@ -1,0 +1,37 @@
+Installation of cbPlayer:
+
+
+1. Upload the unpacked files onto your web-space.
+
+2. Link the CSS and JS. Put the following lines into the head-section of your HTML (meaning between the two <head></head> tags):
+
+    <link rel="stylesheet" href="/cbPlayer/cbplayer.css" type="text/css">
+    <script type="text/javascript" src="/cbPlayer/cbplayer.js"></script>
+
+3. Include the php:
+
+<?php
+
+  // where cbPlayer resides on your server
+  $cbPlayer_dirname = "/cbPlayer";
+
+  // where you have the media files on your server
+  $cbPlayer_mediadir = "/content/media";
+
+  // start cbPlayer!
+  include("cbPlayer/cbplayer.php");
+
+?>
+
+4. Make sure the paths are correct in the examples above!
+
+5. Upload media files:
+   Make sure, you upload every media file with redundant formats:
+   audio: .mp3 and .ogg/oga
+   video: .mp4 (mpeg/AAC) and .ogg/ogv (theora/vorbis)
+
+   Make sure the filenames match, e.g.:
+   Some_Filename_of_outstanding_creativity.mp3
+   Some_Filename_of_outstanding_creativity.ogg
+
+6. Now, as you call up the page, where you have included the player, you'll see cbPlayer in action.

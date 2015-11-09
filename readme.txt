@@ -1,4 +1,4 @@
-cbPlayer v0.07 (2015)
+cbPlayer v0.08 (2015)
 copyright chris_blues <chris@musicchris.de>
 https://musicchris.de
 

@@ -6,6 +6,7 @@
   <meta http-equiv="Content-Script-Type" content="text/javascript">
   <meta http-equiv="Content-Style-Type" content="text/css">
   <link rel="stylesheet" href="cbplayer.css" type="text/css">
+  <script type="text/javascript" src="cbplayer.js"></script>
   <title>cbPlayer - demo</title>
 </head>
 <body>
