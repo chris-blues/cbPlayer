@@ -313,7 +313,7 @@ function createMediaItem(i)
    document.getElementById(i).load();
   }
 
-function cancelPrevMedia()
+function unloadPrevMedia()
   {
    var currentlyPlaying = document.getElementById(currentMediaId);
    var mediaSources = document.getElementsByClassName("cbPlayer_mediaSources_" + currentMediaId);
@@ -504,7 +504,7 @@ function stopMedia()
       var currentlyPlaying = document.getElementById(currentMediaId);
       currentlyPlaying.pause();
       currentlyPlaying.currentTime = 0;
-      cancelPrevMedia();
+      window.setTimeOut( function() { unloadPrevMedia(); }, 250);
      }
    isPlaying = false;
    isPaused = false;
