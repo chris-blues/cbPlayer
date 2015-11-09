@@ -520,7 +520,7 @@ function stopMedia()
    else if (document.webkitExitFullscreen) { document.webkitExitFullscreen(); }
    else if (document.mozCancelFullScreen) { document.mozCancelFullScreen(); }
    else if (document.msExitFullscreen) { document.msExitFullscreen(); }
-   document.getElementById(currentMediaId).controls = false;
+   currentMedia.removeAttribute("controls");
   }
 
 function pauseMedia()
@@ -547,7 +547,7 @@ function fullscreen()
      var currentMedia = document.getElementById(currentMediaId);
 
      currentMedia.removeAttribute("controls");
-     currentMedia.controls = true;
+     //currentMedia.controls = true;
      currentMedia.setAttribute("controls","controls");
 
      // go full-screen
@@ -573,6 +573,6 @@ initPlayer();
 </div>
 <?php
 $endtime = microtime(true);
-//echo "<p id=\"footer\" style=\"font-size: 0.7em; text-align: center;\">Processing needed " . number_format($endtime - $starttime, 3) . " seconds.</p>\n";
+echo "<p id=\"footer\" style=\"font-size: 0.7em; text-align: center;\">Processing needed " . number_format($endtime - $starttime, 3) . " seconds.</p>\n";
 //echo "<pre>"; print_r($files); echo "</pre>\n";
 ?>
