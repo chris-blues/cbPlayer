@@ -504,7 +504,7 @@ function stopMedia()
       var currentlyPlaying = document.getElementById(currentMediaId);
       currentlyPlaying.pause();
       currentlyPlaying.currentTime = 0;
-      setTimeOut( function() { unloadPrevMedia(); }, 250);
+      setTimeout(function(){ unloadPrevMedia(); }, 250);
      }
    isPlaying = false;
    isPaused = false;
