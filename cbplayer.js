@@ -217,13 +217,7 @@ function playMedia(MediaId)
       if (currentMediaId >= mediaElements.length)
        {
         currentMediaId = 0;
-        for (var i = 0; i < mediaElements.length; i++)
-          {
-           mediaElements[i].pause();
-           mediaElements[i].currentTime = 0;
-           mediaElements[i].style.display = "none";
-           document.getElementById("cbPlayer_playlist").removeAttribute("style");
-          }
+        stopMedia(true);
         return;
        }
 
