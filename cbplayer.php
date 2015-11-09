@@ -190,7 +190,7 @@ echo "<hr>\n";
     <a href="javascript:prevMedia();"><img id="cbPlayer_prev" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/rwd.png" alt="prev" title="prev"></a>
     <a href="javascript:playMedia(currentMediaId);"><img id="cbPlayer_play" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/play.png" alt="play" title="play"></a>
     <a href="javascript:pauseMedia(currentMediaId);"><img id="cbPlayer_pause" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/pause.png" alt="pause" title="pause"></a>
-    <a href="javascript:stopMedia();" id="cbPlayer_stopButton"><img id="cbPlayer_stop" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/stop.png" alt="stop" title="stop"></a>
+    <a href="javascript:stopMedia(true);" id="cbPlayer_stopButton"><img id="cbPlayer_stop" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/stop.png" alt="stop" title="stop"></a>
     <a href="javascript:nextMedia();"><img id="cbPlayer_next" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/fwd.png" alt="next" title="next"></a>
     <a class="cbPlayer_fullscreen" href="javascript:fullscreen();" onclick="fullscreen();">
        <img id="cbPlayer_fullscreen" class="cbPlayer_mediacontrols cbPlayer_fullscreen" src="<?php echo $cbPlayer_dirname; ?>/pics/fullscreen.png" alt="fullscreen" title="fullscreen" style="display: none;">
@@ -400,7 +400,7 @@ function secs2minSecs(time)
 
 function prevMedia()
     {
-     if (isPlaying == true) { stopMedia(); }
+     if (isPlaying == true) { stopMedia(false); }
      currentMediaId--;
      if (currentMediaId < 0) { currentMediaId = 0; }
      playMedia(currentMediaId);
@@ -412,7 +412,7 @@ function playMedia(MediaId)
        {
         if (isPaused != true)
           {
-           stopMedia();
+           stopMedia(false);
           }
        }
      if (isPaused != true)
@@ -495,7 +495,7 @@ function playMedia(MediaId)
        }
     }
 
-function stopMedia()
+function stopMedia(unload)
   {
    activateMediaControl("stop");
    document.getElementById("cbPlayer_stopButton").blur();
@@ -504,7 +504,7 @@ function stopMedia()
       var currentlyPlaying = document.getElementById(currentMediaId);
       currentlyPlaying.pause();
       currentlyPlaying.currentTime = 0;
-      setTimeout(function(){ unloadPrevMedia(); }, 250);
+      if (unload == true) { setTimeout(function(){ unloadPrevMedia(); }, 100); }
      }
    isPlaying = false;
    isPaused = false;
@@ -534,7 +534,7 @@ function pauseMedia()
 
 function nextMedia()
     {
-     if (isPlaying == true) { stopMedia(); }
+     if (isPlaying == true) { stopMedia(false); }
      currentMediaId++;
      playMedia(currentMediaId);
     }
