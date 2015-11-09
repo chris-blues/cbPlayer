@@ -9,7 +9,7 @@
 <div id="cbplayer">
 <?php
 $starttime = microtime(true);
-$version = "v0.06";
+$version = "v0.07";
 
 require_once('getID3/getid3/getid3.php');
 $getID3 = new getID3;
@@ -578,6 +578,6 @@ initPlayer();
 </div>
 <?php
 $endtime = microtime(true);
-echo "<p id=\"footer\" style=\"font-size: 0.7em; text-align: center;\">Processing needed " . number_format($endtime - $starttime, 3) . " seconds.</p>\n";
+//echo "<p id=\"footer\" style=\"font-size: 0.7em; text-align: center;\">Processing needed " . number_format($endtime - $starttime, 3) . " seconds.</p>\n";
 //echo "<pre>"; print_r($files); echo "</pre>\n";
 ?>
