@@ -33,6 +33,10 @@ audio, video {
   margin: 4px auto;
 }
 
+a.cbPlayer_controls {
+  padding: 0px !important;
+}
+
 .cbPlayer_mediacontrols {
   margin: 0px;
   padding: 0px;

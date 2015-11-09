@@ -187,12 +187,12 @@ echo "<hr>\n";
     </div>
 <div id="cbPlayer_leftSideBox">
   <div class="cbPlayer_mediacontrols_wrapper">
-    <a href="javascript:prevMedia();"><img id="cbPlayer_prev" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/rwd.png" alt="prev" title="prev"></a>
-    <a href="javascript:playMedia(currentMediaId);"><img id="cbPlayer_play" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/play.png" alt="play" title="play"></a>
-    <a href="javascript:pauseMedia(currentMediaId);"><img id="cbPlayer_pause" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/pause.png" alt="pause" title="pause"></a>
-    <a href="javascript:stopMedia(true);" id="cbPlayer_stopButton"><img id="cbPlayer_stop" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/stop.png" alt="stop" title="stop"></a>
-    <a href="javascript:nextMedia();"><img id="cbPlayer_next" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/fwd.png" alt="next" title="next"></a>
-    <a class="cbPlayer_fullscreen" href="javascript:fullscreen();" onclick="fullscreen();">
+    <a href="javascript:prevMedia();" class="cbPlayer_controls"><img id="cbPlayer_prev" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/rwd.png" alt="prev" title="prev"></a>
+    <a href="javascript:playMedia(currentMediaId);" class="cbPlayer_controls"><img id="cbPlayer_play" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/play.png" alt="play" title="play"></a>
+    <a href="javascript:pauseMedia(currentMediaId);" class="cbPlayer_controls"><img id="cbPlayer_pause" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/pause.png" alt="pause" title="pause"></a>
+    <a href="javascript:stopMedia(true);" id="cbPlayer_stopButton" class="cbPlayer_controls"><img id="cbPlayer_stop" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/stop.png" alt="stop" title="stop"></a>
+    <a href="javascript:nextMedia();" class="cbPlayer_controls"><img id="cbPlayer_next" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/fwd.png" alt="next" title="next"></a>
+    <a class="cbPlayer_fullscreen" href="javascript:fullscreen();" onclick="fullscreen();" class="cbPlayer_controls">
        <img id="cbPlayer_fullscreen" class="cbPlayer_mediacontrols cbPlayer_fullscreen" src="<?php echo $cbPlayer_dirname; ?>/pics/fullscreen.png" alt="fullscreen" title="fullscreen" style="display: none;">
     </a>
   </div>
