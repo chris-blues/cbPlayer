@@ -61,7 +61,7 @@ function createPlaylist()
    document.getElementById("cbPlayer_artist").innerHTML = "Artist:";
    document.getElementById("cbPlayer_title").innerHTML = "Title:";
    document.getElementById("cbPlayer_album").innerHTML = "Album:";
-   document.getElementById("cbPlayer_download").innerHTML = "Download:";
+   if (showDownload != false) { document.getElementById("cbPlayer_download").innerHTML = "Download:"; }
   }
 
 function createMediaItem(i)
@@ -237,29 +237,30 @@ function playMedia(MediaId)
 
      document.getElementById("cbPlayer_currentTitle").innerHTML = currentMediaData.getAttribute("data-title");
      document.getElementById("cbPlayer_currentArtist").innerHTML = currentMediaData.getAttribute("data-artist");
-     if (currentMedia.getAttribute("data-year") != "")
+     document.getElementById("cbPlayer_currentAlbum").innerHTML = currentMediaData.getAttribute("data-album");
+     if (currentMediaData.getAttribute("data-year") != "" || currentMediaData.getAttribute("data-year") == undefined)
        {
-        document.getElementById("cbPlayer_currentAlbum").innerHTML = currentMediaData.getAttribute("data-album") + " (" + currentMediaData.getAttribute("data-year") + ")";
-       }
-     else
-       {
-        document.getElementById("cbPlayer_currentAlbum").innerHTML = currentMediaData.getAttribute("data-album");
+        document.getElementById("cbPlayer_currentAlbum").innerHTML += " (" + currentMediaData.getAttribute("data-year") + ")";
        }
      var downloads = document.getElementsByClassName("cbPlayer_src_" + currentMediaId);
         document.getElementById("cbPlayer_currentDownload").innerHTML = "";
-     for (var i = 0; i < downloads.length; i++)
-       {
-        a = document.createElement("a");
-        a.class = "cbPlayer_downloadLink";
-        a.href = downloads[i].getAttribute("data-src");
-        a.download = currentMediaData.getAttribute("data-artist") + " - " + currentMediaData.getAttribute("data-title") + "." + downloads[i].getAttribute("data-fileformat");
-        a.text = downloads[i].getAttribute("data-type");
-        document.getElementById("cbPlayer_currentDownload").appendChild(a);
-        var filesize = downloads[i].getAttribute("data-filesize") / 1024 / 1024;
-        var shortenedFilesize = Math.round(filesize * 100) / 100;
-        var app = " (" + shortenedFilesize + " MB) ";
-        document.getElementById("cbPlayer_currentDownload").innerHTML += app;
-       }
+     
+     if (showDownload != false)
+        {
+         for (var i = 0; i < downloads.length; i++)
+            {
+             a = document.createElement("a");
+             a.class = "cbPlayer_downloadLink";
+             a.href = downloads[i].getAttribute("data-src");
+             a.download = currentMediaData.getAttribute("data-artist") + " - " + currentMediaData.getAttribute("data-title") + "." + downloads[i].getAttribute("data-fileformat");
+             a.text = downloads[i].getAttribute("data-type");
+             document.getElementById("cbPlayer_currentDownload").appendChild(a);
+             var filesize = downloads[i].getAttribute("data-filesize") / 1024 / 1024;
+             var shortenedFilesize = Math.round(filesize * 100) / 100;
+             var app = " (" + shortenedFilesize + " MB) ";
+             document.getElementById("cbPlayer_currentDownload").innerHTML += app;
+            }
+        }
      currentMedia.ontimeupdate = function() { updateTime() };
 
      function updateTime()

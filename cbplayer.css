@@ -92,7 +92,7 @@ img.cbPlayer_mediacontrols {
 }
 #cbPlayer_leftSideBox {
   float: left;
-  margin: 10px;
+  margin: 10px 10px 0px;
   display: none;
 }
 }
@@ -108,7 +108,7 @@ img.cbPlayer_mediacontrols {
 }
 
 #cbPlayer_progInfo {
-  padding: 9px;
+  padding: 9px 9px 0px;
   font-size: 0.7em;
 }
 

@@ -4,6 +4,7 @@
 // ==     released under GPL-3 public license        ==
 // ==   see LICENSE in top directory for details     ==
 // ====================================================
+require_once('cbplayer.conf.php');
 ?>
 
 <div id="cbplayer">
@@ -193,7 +194,7 @@ echo "<hr>\n";
     <a href="javascript:stopMedia(true);" id="cbPlayer_stopButton" class="cbPlayer_controls"><img id="cbPlayer_stop" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/stop.png" alt="stop" title="stop"></a>
     <a href="javascript:nextMedia();" class="cbPlayer_controls"><img id="cbPlayer_next" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/fwd.png" alt="next" title="next"></a>
     <a class="cbPlayer_fullscreen cbPlayer_controls" href="javascript:fullscreen();" onclick="fullscreen();">
-       <img id="cbPlayer_fullscreen" class="cbPlayer_mediacontrols cbPlayer_fullscreen" src="<?php echo $cbPlayer_dirname; ?>/pics/fullscreen.png" alt="fullscreen" title="fullscreen" style="display: none;">
+      <img id="cbPlayer_fullscreen" class="cbPlayer_mediacontrols cbPlayer_fullscreen" src="<?php echo $cbPlayer_dirname; ?>/pics/fullscreen.png" alt="fullscreen" title="fullscreen" style="display: none;">
     </a>
   </div>
   <div id="cbPlayer_progressinfo">
@@ -211,11 +212,12 @@ echo "<hr>\n";
       <tr><td class="cbPlayer_mediaInfo cbPlayer_leftside" id="cbPlayer_download"></td><td id="cbPlayer_currentDownload" class="cbPlayer_mediaInfo"></td></tr>
     </tbody>
   </table>
-
+<div style="clear: both;"></div>
 <script>
 
 var version = "<?php echo $version; ?>";
 var cbPlayer_dir = "<?php echo $cbPlayer_dirname; ?>";
+var showDownload = <?php if($cbPlayer_showDownload != false or !isset($cbPlayer_showDownload)) { echo "true"; } else { echo "false"; } ?>;
 initPlayer();
 
 </script>
@@ -223,6 +225,6 @@ initPlayer();
 </div>
 <?php
 $endtime = microtime(true);
-//echo "<p id=\"footer\" style=\"font-size: 0.7em; text-align: center;\">Processing needed " . number_format($endtime - $starttime, 3) . " seconds.</p>\n";
+if ($cbPlayer_showTimer == true) echo "<p id=\"cbPlayer_footer\" style=\"font-size: 0.7em; text-align: center;\">Processing needed " . number_format($endtime - $starttime, 3) . " seconds.</p>\n";
 //echo "<pre>"; print_r($files); echo "</pre>\n";
 ?>
