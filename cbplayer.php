@@ -143,12 +143,8 @@ foreach ($files as $key => $id)
 
     <div id="cbPlayer_<?php echo $files[$key]["id"]; ?>"
          class="cbPlayer_mediaContent"
-         data-preload="metadata"
+         data-preload="auto"
          data-onended="nextMedia();"
-         data-onloadstart="showMedia(<?php echo $files[$key]["id"]; ?>);"
-         data-onloadedmetadata="activateMedia(<?php echo $files[$key]["id"]; ?>);"
-         data-onprogress="finishMedia(<?php echo $files[$key]["id"]; ?>);"
-         data-oncanplaythrough="finishMedia(<?php echo $files[$key]["id"]; ?>);"
          data-artist="<?php echo $files[$key]["artist"]; ?>"
          data-title="<?php echo $files[$key]["title"]; ?>"
          data-album="<?php echo $files[$key]["album"]; ?>"
