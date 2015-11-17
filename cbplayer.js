@@ -8,6 +8,7 @@
 function initPlayer()
   {
    currentMediaId = 0;
+   fileSupport = 0;
    mediaElements = document.getElementsByClassName("cbPlayer_mediaContent");
    isPlaying = false;
    isPaused = false;
@@ -64,7 +65,7 @@ function createPlaylist()
    if (showDownload != false) { document.getElementById("cbPlayer_download").innerHTML = "Download:"; }
   }
 
-function createMediaItem(i)
+function createMediaTag(i)
   {
    mediaDiv = document.getElementById("cbPlayer_media");
    while (mediaDiv.hasChildNodes())
@@ -80,9 +81,17 @@ function createMediaItem(i)
    media.controls = false;
    media.onended = function() { nextMedia() };
 
+   fileSupport = 0;
    var currentMediaSources = document.getElementsByClassName("cbPlayer_src_" + i);
    for (var sources = 0; sources < currentMediaSources.length; sources++)
      {
+     /* var type = currentMediaSources[sources].getAttribute("data-type");
+      var codec = currentMediaSources[sources].getAttribute("data-codec");
+      var isSupported = media.canPlayType(type + '; codecs="' + codec + '"');
+      if (isSupported != "")
+	{
+	 fileSupport++;
+        } */
       var currentMediaSource = document.createElement("source");
       currentMediaSource.className = "cbPlayer_mediaSources_" + i;
       currentMediaSource.id = "cbPlayer_playlistItem_" + i + "_" + currentMediaSources[sources].getAttribute("data-fileformat");
@@ -93,7 +102,14 @@ function createMediaItem(i)
 
    var parent = document.getElementById("cbPlayer_media");
    parent.appendChild(media);
-   document.getElementById(i).load();
+ /*  document.getElementById("cbPlayer_statusbar").innerHTML = toString(fileSupport);
+   if (fileSupport < 1) 
+     {
+      parent.innerHTML = "Diese Datei liegt nicht in einem unterstützten Format vor und kann leider von ihrem Browser nicht wiedergegeben werden.";
+      return;
+     } */
+   var mediaFile = document.getElementById(i);
+   mediaFile.load();
   }
 
 function unloadPrevMedia()
@@ -205,7 +221,7 @@ function playMedia(MediaId)
        }
      if (isPaused != true)
        {
-        createMediaItem(MediaId);
+        createMediaTag(MediaId);
        }
 
      var anchors = document.getElementsByTagName("a");

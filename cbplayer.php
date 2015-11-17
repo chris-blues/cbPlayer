@@ -10,7 +10,7 @@ require_once('cbplayer.conf.php');
 <div id="cbplayer">
 <?php
 $starttime = microtime(true);
-$version = "v0.08";
+$version = "v0.09";
 
 require_once('getID3/getid3/getid3.php');
 $getID3 = new getID3;
@@ -67,11 +67,15 @@ foreach ($dir as $key => $filename)
          // ===================================================================
          if ($ThisFileInfo["fileformat"] == "ogg" or $ThisFileInfo["fileformat"] == "ogv" or $ThisFileInfo["fileformat"] == "mp4") $files[$counter]["type"][$extcount]["mime"] = "video/" . $ThisFileInfo["fileformat"];
          else $files[$counter]["type"][$extcount]["mime"] = $ThisFileInfo["mime_type"];
+         
+         if ($ThisFileInfo["fileformat"] == "ogg") $files[$counter]["type"][$extcount]["codec"] = $ThisFileInfo["video"]["dataformat"] . ", " . $ThisFileInfo["audio"]["dataformat"];
+	 else $files[$counter]["type"][$extcount]["codec"] = $ThisFileInfo["video"]["fourcc"] . ", " . $ThisFileInfo["audio"]["codec"];
         }
       else
         {
          if ($ThisFileInfo["fileformat"] == "ogg" or $ThisFileInfo["fileformat"] == "oga") $files[$counter]["type"][$extcount]["mime"] = "audio/" . $ThisFileInfo["fileformat"];
          else $files[$counter]["type"][$extcount]["mime"] = $ThisFileInfo["mime_type"];
+         $files[$counter]["type"][$extcount]["codec"] = $ThisFileInfo["audio"]["codec"];
         }
 
       // Check if some tags are missing - try to get it from alternative file!
@@ -112,12 +116,22 @@ foreach ($dir as $key => $filename)
          $files[$counter]["mediatype"] = "video";
          if ($ThisFileInfo["fileformat"] == "ogg" or $ThisFileInfo["fileformat"] == "mp4") $files[$counter]["type"][0]["mime"] = "video/" . $ThisFileInfo["fileformat"];
          else $files[$counter]["type"][0]["mime"] = $ThisFileInfo["mime_type"];
+	 if ($ThisFileInfo["fileformat"] == "ogg") $files[$counter]["type"][0]["codec"] = $ThisFileInfo["video"]["dataformat"] . ", " . $ThisFileInfo["audio"]["dataformat"];
+	 else $files[$counter]["type"][0]["codec"] = $ThisFileInfo["video"]["fourcc"] . ", " . $ThisFileInfo["audio"]["codec"];
         }
       else
         {
          $files[$counter]["mediatype"] = "audio";
-         if ($ThisFileInfo["fileformat"] == "ogg") $files[$counter]["type"][0]["mime"] = "audio/" . $ThisFileInfo["fileformat"];
-         else $files[$counter]["type"][0]["mime"] = $ThisFileInfo["mime_type"];
+         if ($ThisFileInfo["fileformat"] == "ogg")
+           {
+            $files[$counter]["type"][0]["mime"] = "audio/" . $ThisFileInfo["fileformat"];
+            $files[$counter]["type"][0]["codec"] = $ThisFileInfo["audio"]["dataformat"];
+	   }
+         else
+           {
+            $files[$counter]["type"][0]["mime"] = $ThisFileInfo["mime_type"];
+            $files[$counter]["type"][0]["codec"] = $ThisFileInfo["audio"]["codec"];
+	   }
         }
       $files[$counter]["playtime"] = ceil($ThisFileInfo["playtime_seconds"]);
       $files[$counter]["id"] = $counter;
@@ -159,7 +173,9 @@ foreach ($files as $key => $id)
               data-src="<?php echo "$cbPlayer_mediadir/" . rawurlencode($files[$key]["filename"]) . ".{$files[$key]["type"][$extkey]["ext"]}"; ?>"
               data-type="<?php echo $files[$key]["type"][$extkey]["mime"]; ?>"
               data-filesize="<?php echo $files[$key]["type"][$extkey]["filesize"]; ?>"
-              data-fileformat="<?php echo $files[$key]["type"][$extkey]["ext"]; ?>"></div>
+              data-fileformat="<?php echo $files[$key]["type"][$extkey]["ext"]; ?>"
+              data-codec="<?php echo $files[$key]["type"][$extkey]["codec"]; ?>">
+              </div>
 <?php
      } ?>
      </div>
