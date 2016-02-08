@@ -15,17 +15,23 @@ $version = "v0.10";
 require_once('getID3/getid3/getid3.php');
 $getID3 = new getID3;
 
-// read playlist file if exists
-$playlistFile = 'cbplayer/playlist.dat';
-$playlistexists = FALSE;
-if (file_exists($playlistfile))
+// Check for cache dir
+$cache_dir = 'cbplayer/cache';
+if (!file_exists($cache_dir) or !is_dir($cache_dir))
   {
-   $playlistexists = TRUE;
+   mkdir($cache_dir, 0755);
+  }
+
+// read playlist file if exists
+$playlistFile = 'cbplayer/cache/playlist.dat';
+$playlistexists = FALSE;
+//if (file_exists($playlistfile))
+//  {
    $playlistContent = file($playlistFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
    foreach ($playlistContent as $key => $value)
      {
       $playlistitem = explode("\0", $value);
-      $files[$key]["id"] = $playlistitem[0];
+      $files[$key]["id"] = $playlistitem[0]; if ($files[$key]["id"] != "") $playlistexists = TRUE;
       $files[$key]["filename"] = $playlistitem[1];
       $files[$key]["mediatype"] = $playlistitem[2];
       $files[$key]["artist"] = $playlistitem[3];
@@ -38,16 +44,19 @@ if (file_exists($playlistfile))
       $counter = 8;
       for ($i = 0; $i < $subitems; $i++)
         {
-         $files[$key]["type"][$i]["ext"] = $playlistitem[$i]; $counter++;
-         $files[$key]["type"][$i]["mime"] = $playlistitem[$i]; $counter++;
-         $files[$key]["type"][$i]["codec"] = $playlistitem[$i]; $counter++;
-         $files[$key]["type"][$i]["filesize"] = $playlistitem[$i]; $counter++;
+         $files[$key]["type"][$i]["ext"] = $playlistitem[$counter]; $counter++;
+         $files[$key]["type"][$i]["mime"] = $playlistitem[$counter]; $counter++;
+         $files[$key]["type"][$i]["codec"] = $playlistitem[$counter]; $counter++;
+         $files[$key]["type"][$i]["filesize"] = $playlistitem[$counter]; $counter++;
         }
      }
-  }
+//  }
+//else echo "$playlistFile does not exist!<br>\n";
+
+//echo "<pre style=\"width: 40%; float: left;\">FILES:\n"; print_r($files); echo "</pre>\n";
 
 // read timestamp file if exists
-$timestampFile = 'cbplayer/timestamps.dat';
+$timestampFile = 'cbplayer/cache/timestamps.dat';
 $timestampchanged = FALSE;
 if (file_exists($timestampFile))
   {
@@ -65,6 +74,7 @@ if (file_exists($timestampFile))
 else
   {
    $timestampexists = FALSE;
+//   echo "$timestampFile does not exist!<br>\n";
   }
 
 
@@ -125,7 +135,7 @@ foreach ($dircontents as $key => $filename)
 
 $counter = -1;
 
-foreach ($dircontents as $key => $filename)
+ foreach ($dircontents as $key => $filename)
   {
    // if this file has the same name as the last run, but different extension -> stay in the same branch, but add extension
    $lastname = $name;
@@ -139,7 +149,9 @@ foreach ($dircontents as $key => $filename)
 
    if (strcasecmp($lastname,$name) == 0)
      {
-      if (!isset($filesTimestamp[$key]["changed"]) and $playlistexists) continue;
+      if (!isset($filesTimestamp[$key]["changed"]) and $playlistexists == TRUE) continue;
+      $ext_exists = array_search($ext, array_column($files[$counter]["type"], "ext"));
+      if ($ext_exists) unset($files[$counter]["type"][$ext_exists]);
       $ThisFileInfo = $getID3->analyze($fullname);
       getid3_lib::CopyTagsToComments($ThisFileInfo);
 
@@ -188,7 +200,7 @@ foreach ($dircontents as $key => $filename)
    else // new filename, so make a new branch
      {
       $counter++;
-      if (!isset($filesTimestamp[$key]["changed"]) and $playlistexists) continue;
+      if (!isset($filesTimestamp[$key]["changed"]) and $playlistexists == TRUE) continue;
       // Read audio tags
       $ThisFileInfo = $getID3->analyze($fullname);
       getid3_lib::CopyTagsToComments($ThisFileInfo);
@@ -232,7 +244,7 @@ foreach ($dircontents as $key => $filename)
       $files[$counter]["title"] = $ThisFileInfo['comments']['title'][0];
       $files[$counter]["album"] = $ThisFileInfo['comments']['album'][0];
       $files[$counter]["year"] = $ThisFileInfo['comments'][$year][0];
-     }
+      }
    unset($ThisFileInfo);
   }
 
