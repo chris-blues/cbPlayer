@@ -22,6 +22,9 @@ $search = array("ä", "Ä", "ö", "Ö", "ü", "Ü", "ß", "&", "+", "'", ", ", "
 $replace = array("ae", "Ae", "oe", "Oe", "ue", "Ue", "ss", "_", "_", "", "_", "_", "_", "_", "_", "ogg", "ogg");
 
 $dir = scandir($cbPlayer_mediadir);
+$cbPlayer_cache_dir = realpath("{$cbPlayer_dirname}/cache");
+$timestampFile = realpath("{$cbPlayer_cache_dir}/timestamps.dat");
+$playlistFile = realpath("{$cbPlayer_cache_dir}/playlist.dat");
 
 $dircounter = 0;
 foreach ($dir as $key => $filename)
@@ -52,14 +55,12 @@ foreach ($dir as $key => $filename)
   }
 
 // Check for cache dir
-$cbPlayer_cache_dir = $cbPlayer_dirname . '/cache';
 if (!file_exists($cbPlayer_cache_dir) or !is_dir($cbPlayer_cache_dir))
   {
    mkdir($cbPlayer_cache_dir, 0755);
   }
 
 // read playlist file if exists
-$playlistFile = $cbPlayer_cache_dir . '/playlist.dat';
 $playlistexists = FALSE;
 //if (file_exists($playlistfile))
 //  {
@@ -101,6 +102,8 @@ foreach ($dircontents as $key => $value)
       unset($files, $playlistContent);
       $playlistexists = FALSE;
       $playlistUpdateNeeded = TRUE;
+      unlink($playlistFile);
+      unlink($timestampFile);
       //echo "Check: $value not found in \$dircontentsCached (line 99)<br>\n";
       continue 1;
      }
@@ -112,6 +115,8 @@ foreach ($dircontentsCached as $key => $value)
       unset($files, $playlistContent);
       $playlistexists = FALSE;
       $playlistUpdateNeeded = TRUE;
+      unlink($playlistFile);
+      unlink($timestampFile);
       //echo "Check: $value not found in \$dircontents (line 110)<br>\n";
       continue 1;
      }
@@ -126,6 +131,8 @@ foreach ($playlistContent as $key => $value)
         {
          unset($files);
          $playlistUpdateNeeded = TRUE;
+         unlink($playlistFile);
+         unlink($timestampFile);
          //echo "Check: $thisFile file not found (line 125)<br>\n";
          continue 2;
         }
@@ -135,6 +142,8 @@ foreach ($playlistContent as $key => $value)
         {
 	 unset($files);
 	 $playlistUpdateNeeded = TRUE;
+         unlink($playlistFile);
+         unlink($timestampFile);
 	 //echo "Check: No file found for $thisMediaItem (line 134)<br>\n";
 	 continue 2;
 	}
@@ -144,7 +153,6 @@ foreach ($playlistContent as $key => $value)
 //echo "<pre style=\"width: 40%; float: left;\">FILES:\n"; print_r($files); echo "</pre>\n";
 
 // read timestamp file if exists
-$timestampFile = $cbPlayer_cache_dir . '/timestamps.dat';
 $timestampchanged = FALSE;
 //if (file_exists($timestampFile) and !$playlistUpdateNeeded)
 //  {
