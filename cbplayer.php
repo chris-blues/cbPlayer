@@ -425,7 +425,7 @@ initPlayer();
 <noscript>Dieser Medienplayer benötigt JavaScript um zu funktionieren. Dazu müssen Sie JavaScript aktivieren.</noscript>
 </div>
 <?php
-if ($playlistUpdateNeeded) $cacheUpdated = "<br> Cache needed to be rebuild, all media files have been rescanned! Sorry for the longer processing time!";
+if ($playlistUpdateNeeded) $cacheUpdated = "<br> Cache needed to be rebuilt, all media files have been rescanned! Sorry for the longer processing time!";
 $endtime = microtime(true);
 if ($cbPlayer_showTimer == true) echo "<p id=\"cbPlayer_footer\" style=\"font-size: 0.7em; text-align: center;\">Processing needed " . number_format($endtime - $starttime, 3) . " seconds.$cacheUpdated</p>\n";
 //echo "<pre style=\"width: 49%; float: left;\">FILES:\n"; print_r($files); echo "</pre>\n";
