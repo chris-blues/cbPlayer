@@ -10,85 +10,22 @@ require_once('cbplayer.conf.php');
 <div id="cbplayer">
 <?php
 $starttime = microtime(true);
-$version = "v0.10";
+$version = "v0.11";
 
 require_once('getID3/getid3/getid3.php');
 $getID3 = new getID3;
 
-// Check for cache dir
-$cache_dir = 'cbplayer/cache';
-if (!file_exists($cache_dir) or !is_dir($cache_dir))
-  {
-   mkdir($cache_dir, 0755);
-  }
-
-// read playlist file if exists
-$playlistFile = 'cbplayer/cache/playlist.dat';
-$playlistexists = FALSE;
-//if (file_exists($playlistfile))
-//  {
-   $playlistContent = file($playlistFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-   foreach ($playlistContent as $key => $value)
-     {
-      $playlistitem = explode("\0", $value);
-      $files[$key]["id"] = $playlistitem[0]; if ($files[$key]["id"] != "") $playlistexists = TRUE;
-      $files[$key]["filename"] = $playlistitem[1];
-      $files[$key]["mediatype"] = $playlistitem[2];
-      $files[$key]["artist"] = $playlistitem[3];
-      $files[$key]["album"] = $playlistitem[4];
-      $files[$key]["title"] = $playlistitem[5];
-      $files[$key]["year"] = $playlistitem[6];
-      $files[$key]["playtime"] = $playlistitem[7];
-      $length = count($playlistitem) -7;
-      $subitems = floor($length / 4);
-      $counter = 8;
-      for ($i = 0; $i < $subitems; $i++)
-        {
-         $files[$key]["type"][$i]["ext"] = $playlistitem[$counter]; $counter++;
-         $files[$key]["type"][$i]["mime"] = $playlistitem[$counter]; $counter++;
-         $files[$key]["type"][$i]["codec"] = $playlistitem[$counter]; $counter++;
-         $files[$key]["type"][$i]["filesize"] = $playlistitem[$counter]; $counter++;
-        }
-     }
-//  }
-//else echo "$playlistFile does not exist!<br>\n";
-
-//echo "<pre style=\"width: 40%; float: left;\">FILES:\n"; print_r($files); echo "</pre>\n";
-
-// read timestamp file if exists
-$timestampFile = 'cbplayer/cache/timestamps.dat';
-$timestampchanged = FALSE;
-if (file_exists($timestampFile))
-  {
-   $timestampexists = TRUE;
-   $timestampFileContent = file($timestampFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-   foreach ($timestampFileContent as $key => $value)
-     {
-      $timestamptmp = explode(" ", $value);
-      $timestamps[$key]["file"] = $timestamptmp[0];
-      $timestamps[$key]["time"] = $timestamptmp[1];
-      unset($timestamptmp);
-     }
-   unset($key, $value, $timestampFileContent);
-  }
-else
-  {
-   $timestampexists = FALSE;
-//   echo "$timestampFile does not exist!<br>\n";
-  }
-
-
 // ==============
 // read media dir
 // ==============
-$search = array("ä", "Ä", "ö", "Ö", "ü", "Ü", "ß", "&", "+", "'", ", ", " ", ",", "__", "__");
-$replace = array("ae", "Ae", "oe", "Oe", "ue", "Ue", "ss", "_", "_", "", "_", "_", "_", "_", "_");
+$search = array("ä", "Ä", "ö", "Ö", "ü", "Ü", "ß", "&", "+", "'", ", ", " ", ",", "__", "__", "ogv", "oga");
+$replace = array("ae", "Ae", "oe", "Oe", "ue", "Ue", "ss", "_", "_", "", "_", "_", "_", "_", "_", "ogg", "ogg");
 
 $dir = scandir($cbPlayer_mediadir);
 
 $dircounter = 0;
 foreach ($dir as $key => $filename)
-  { // screen out dotfiles ("." ".." or ".htaccess") and leave only normal files in the array! And make filenames URL compatible.
+  { // screen out dotfiles ("." ".." or ".htaccess") and dirs - leave only normal files in the array! And make filenames URL compatible.
    if (strncmp($filename,".",1) == 0) { unset($dir[$key]); continue 1; }
 
    $oldfilename = $filename;
@@ -114,20 +51,139 @@ foreach ($dir as $key => $filename)
    $dircounter++;
   }
 
-// compare timestamps
+// Check for cache dir
+$cbPlayer_cache_dir = $cbPlayer_dirname . '/cache';
+if (!file_exists($cbPlayer_cache_dir) or !is_dir($cbPlayer_cache_dir))
+  {
+   mkdir($cbPlayer_cache_dir, 0755);
+  }
+
+// read playlist file if exists
+$playlistFile = $cbPlayer_cache_dir . '/playlist.dat';
+$playlistexists = FALSE;
+//if (file_exists($playlistfile))
+//  {
+//   echo "$playlistFile exists!<br>\n";
+   $playlistContent = file($playlistFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+   foreach ($playlistContent as $key => $value)
+     {
+      $playlistitem = explode("\0", $value);
+      $files[$key]["id"] = $key;
+      $files[$key]["filename"] = $playlistitem[0]; if ($files[$key]["filename"] != "") $playlistexists = TRUE;
+      $files[$key]["mediatype"] = $playlistitem[1];
+      $files[$key]["artist"] = $playlistitem[2];
+      $files[$key]["album"] = $playlistitem[3];
+      $files[$key]["title"] = $playlistitem[4];
+      $files[$key]["year"] = $playlistitem[5];
+      $files[$key]["playtime"] = $playlistitem[6];
+      $length = count($playlistitem) -6;
+      $subitems = floor($length / 4);
+      $counter = 7;
+      for ($i = 0; $i < $subitems; $i++)
+        {
+         $files[$key]["type"][$i]["ext"] = $playlistitem[$counter]; $counter++;
+         $files[$key]["type"][$i]["mime"] = $playlistitem[$counter]; $counter++;
+         $files[$key]["type"][$i]["codec"] = $playlistitem[$counter]; $counter++;
+         $files[$key]["type"][$i]["filesize"] = $playlistitem[$counter]; $counter++;
+         $dircontentsCached[] = $files[$key]["filename"] . "." . $files[$key]["type"][$i]["ext"];
+        }
+     }
+//  }
+//else echo "$playlistFile does not exist!<br>\n";
+
+//echo "<pre style=\"width: 40%; float: left;\">FILES:\n"; print_r($files); echo "</pre>\n";
+
+// Check for missing files
+foreach ($dircontents as $key => $value)
+  {
+   if (!in_array($value, $dircontentsCached))
+     {
+      unset($files, $playlistContent);
+      $playlistexists = FALSE;
+      $playlistUpdateNeeded = TRUE;
+      //echo "Check: $value not found in \$dircontentsCached (line 99)<br>\n";
+      continue 1;
+     }
+  }
+foreach ($dircontentsCached as $key => $value)
+  {
+   if (!in_array($value, $dircontents))
+     {
+      unset($files, $playlistContent);
+      $playlistexists = FALSE;
+      $playlistUpdateNeeded = TRUE;
+      //echo "Check: $value not found in \$dircontents (line 110)<br>\n";
+      continue 1;
+     }
+  }
+foreach ($playlistContent as $key => $value)
+  {
+   if (!isset($files)) continue 1;
+   foreach($files[$key]["type"] as $file => $types)
+     {
+      $thisFile = "$cbPlayer_mediadir/{$files[$key]["filename"]}.{$files[$key]["type"][$file]["ext"]}";
+      if (!file_exists($thisFile))
+        {
+         unset($files);
+         $playlistUpdateNeeded = TRUE;
+         //echo "Check: $thisFile file not found (line 125)<br>\n";
+         continue 2;
+        }
+      $checkmissing = array_column($files[$key]["type"], "ext");
+      $thisMediaItem = $files[$key]["artist"] . " - " . $files[$key]["title"];
+      if (!isset($checkmissing[0]))
+        {
+	 unset($files);
+	 $playlistUpdateNeeded = TRUE;
+	 //echo "Check: No file found for $thisMediaItem (line 134)<br>\n";
+	 continue 2;
+	}
+     }
+  }
+
+//echo "<pre style=\"width: 40%; float: left;\">FILES:\n"; print_r($files); echo "</pre>\n";
+
+// read timestamp file if exists
+$timestampFile = $cbPlayer_cache_dir . '/timestamps.dat';
+$timestampchanged = FALSE;
+//if (file_exists($timestampFile) and !$playlistUpdateNeeded)
+//  {
+   $timestampexists = TRUE;
+   $timestampFileContent = file($timestampFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+   foreach ($timestampFileContent as $key => $value)
+     {
+      $timestamptmp = explode(" ", $value);
+      $timestamps[$key]["file"] = $timestamptmp[0];
+      $timestamps[$key]["time"] = $timestamptmp[1];
+      unset($timestamptmp);
+     }
+   unset($key, $value, $timestampFileContent);
+//  }
+//else
+if (!isset($timestamps[0]["time"]) or $timestamps[0]["time"] == "")
+  {
+   $timestampexists = FALSE;
+   $playlistUpdateNeeded = TRUE;
+   //echo "$timestampFile does not exist or empty! (line 149)<br>\n";
+  }
+
+// compare timestamps and check for missing media files
 $timestampchanged = FALSE;
 $counter = 0;
 foreach ($dircontents as $key => $filename)
   {
-   if (strncmp($filename, ".", 1) == 0 or is_dir("$cbPlayer_mediadir/$filename")) continue;
+   if (strncmp($filename, ".", 1) == 0 or is_dir("$cbPlayer_mediadir/$filename") or !$playlistUpdateNeeded) continue;
    $filesTimestamp[$counter]["file"] = $filename;
    $filesTimestamp[$counter]["time"] = filemtime("$cbPlayer_mediadir/$filename");
    $actualfile = array_search($filename, array_column($timestamps, "file"));
    $actualtimestamp = $timestamps[$actualfile]["time"];
-   if ($filesTimestamp[$counter]["time"] != $actualtimestamp)
+   $fileexists = file_exists("$cbPlayer_mediadir/$filename");
+   if ($filesTimestamp[$counter]["time"] != $actualtimestamp or $fileexists == FALSE)
      {
       $timestampchanged = TRUE;
       $filesTimestamp[$counter]["changed"] = TRUE;
+      $playlistUpdateNeeded = TRUE;
+      //echo "Check: $filename not found or timestamp mismatch (line 172)<br>\n";
      }
    $filesTimestamp[$counter]["timestamp"] = $timestamps[$actualfile]["time"];
    $counter++;
@@ -149,7 +205,7 @@ $counter = -1;
 
    if (strcasecmp($lastname,$name) == 0)
      {
-      if (!isset($filesTimestamp[$key]["changed"]) and $playlistexists == TRUE) continue;
+      if (!isset($filesTimestamp[$key]["changed"]) and $files[$counter]["filename"] != "" and isset($files[$counter]["filename"])) continue;
       $ext_exists = array_search($ext, array_column($files[$counter]["type"], "ext"));
       if ($ext_exists) unset($files[$counter]["type"][$ext_exists]);
       $ThisFileInfo = $getID3->analyze($fullname);
@@ -200,7 +256,7 @@ $counter = -1;
    else // new filename, so make a new branch
      {
       $counter++;
-      if (!isset($filesTimestamp[$key]["changed"]) and $playlistexists == TRUE) continue;
+      if (!isset($filesTimestamp[$key]["changed"]) and $files[$counter]["filename"] != "" and isset($files[$counter]["filename"])) continue;
       // Read audio tags
       $ThisFileInfo = $getID3->analyze($fullname);
       getid3_lib::CopyTagsToComments($ThisFileInfo);
@@ -249,7 +305,7 @@ $counter = -1;
   }
 
 // update playlist.dat and timestamps.dat
-if (!$timestampexists or $timestampchanged or !$playlistexists)
+if (!$timestampexists or $timestampchanged or !$playlistexists or $playlistUpdateNeeded)
   {
    $timestamphandle = fopen($timestampFile,"w");
    foreach ($filesTimestamp as $key => $value)
@@ -261,7 +317,6 @@ if (!$timestampexists or $timestampchanged or !$playlistexists)
    $playlisthandle = fopen($playlistFile,"w");
    foreach ($files as $key => $value)
      {
-      fwrite($playlisthandle, $files[$key]["id"] . "\0");
       fwrite($playlisthandle, $files[$key]["filename"] . "\0");
       fwrite($playlisthandle, $files[$key]["mediatype"] . "\0");
       fwrite($playlisthandle, $files[$key]["artist"] . "\0");
@@ -370,11 +425,13 @@ initPlayer();
 <noscript>Dieser Medienplayer benötigt JavaScript um zu funktionieren. Dazu müssen Sie JavaScript aktivieren.</noscript>
 </div>
 <?php
+if ($playlistUpdateNeeded) $cacheUpdated = "<br> Cache needed to be rebuild, all media files have been rescanned! Sorry for the longer processing time!";
 $endtime = microtime(true);
-if ($cbPlayer_showTimer == true) echo "<p id=\"cbPlayer_footer\" style=\"font-size: 0.7em; text-align: center;\">Processing needed " . number_format($endtime - $starttime, 3) . " seconds.</p>\n";
-//echo "<pre style=\"width: 40%; float: left;\">FILES:\n"; print_r($files); echo "</pre>\n";
-//echo "<pre style=\"width: 40%; float: left;\">FILESTIMESTAMP:\n"; print_r($filesTimestamp); echo "</pre>\n";
-//echo "<pre style=\"width: 40%; float: left;\">DIR:\n"; print_r($dir); echo "</pre>\n";
-//echo "<pre style=\"width: 40%; float: left;\">DIRCONTENTS:\n"; print_r($dircontents); echo "</pre>\n";
-//echo "<pre style=\"width: 40%; float: left;\">TIMESTAMPS:\n"; print_r($timestamps); echo "</pre>\n";
+if ($cbPlayer_showTimer == true) echo "<p id=\"cbPlayer_footer\" style=\"font-size: 0.7em; text-align: center;\">Processing needed " . number_format($endtime - $starttime, 3) . " seconds.$cacheUpdated</p>\n";
+//echo "<pre style=\"width: 49%; float: left;\">FILES:\n"; print_r($files); echo "</pre>\n";
+//echo "<pre style=\"width: 49%; float: left;\">DIR:\n"; print_r($dir); echo "</pre>\n";
+//echo "<pre style=\"width: 49%; float: left;\">DIRCONTENTS:\n"; print_r($dircontents); echo "</pre>\n";
+//echo "<pre style=\"width: 49%; float: left;\">DIRCONTENTSCACHED:\n"; print_r($dircontentsCached); echo "</pre>\n";
+//echo "<pre style=\"width: 49%; float: left;\">FILESTIMESTAMP:\n"; print_r($filesTimestamp); echo "</pre>\n";
+//echo "<pre style=\"width: 49%; float: left;\">TIMESTAMPS:\n"; print_r($timestamps); echo "</pre>\n";
 ?>
