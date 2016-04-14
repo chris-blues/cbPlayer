@@ -10,7 +10,7 @@ require_once('cbplayer.conf.php');
 <div id="cbplayer">
 <?php
 $starttime = microtime(true);
-$version = "v0.11";
+$version = "v0.12";
 
 require_once('getID3/getid3/getid3.php');
 $getID3 = new getID3;
