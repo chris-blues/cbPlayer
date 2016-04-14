@@ -22,9 +22,9 @@ $search = array("ä", "Ä", "ö", "Ö", "ü", "Ü", "ß", "&", "+", "'", ", ", "
 $replace = array("ae", "Ae", "oe", "Oe", "ue", "Ue", "ss", "_", "_", "", "_", "_", "_", "_", "_", "ogg", "ogg");
 
 $dir = scandir($cbPlayer_mediadir);
-$cbPlayer_cache_dir = realpath("{$cbPlayer_dirname}/cache");
-$timestampFile = realpath("{$cbPlayer_cache_dir}/timestamps.dat");
-$playlistFile = realpath("{$cbPlayer_cache_dir}/playlist.dat");
+$cbPlayer_cache_dir = realpath($cbPlayer_dirname) . "/cache";
+$timestampFile = $cbPlayer_cache_dir . "/timestamps.dat";
+$playlistFile = $cbPlayer_cache_dir . "/playlist.dat";
 
 $dircounter = 0;
 foreach ($dir as $key => $filename)
@@ -62,15 +62,15 @@ if (!file_exists($cbPlayer_cache_dir) or !is_dir($cbPlayer_cache_dir))
 
 // read playlist file if exists
 $playlistexists = FALSE;
-//if (file_exists($playlistfile))
-//  {
-//   echo "$playlistFile exists!<br>\n";
+if (file_exists($playlistFile))
+  {
+   //echo "$playlistFile exists!<br>\n";
    $playlistContent = file($playlistFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
    foreach ($playlistContent as $key => $value)
      {
       $playlistitem = explode("\0", $value);
       $files[$key]["id"] = $key;
-      $files[$key]["filename"] = $playlistitem[0]; if ($files[$key]["filename"] != "") $playlistexists = TRUE;
+      $files[$key]["filename"] = $playlistitem[0]; if (strlen($files[$key]["filename"]) > 1) $playlistexists = TRUE;
       $files[$key]["mediatype"] = $playlistitem[1];
       $files[$key]["artist"] = $playlistitem[2];
       $files[$key]["album"] = $playlistitem[3];
@@ -89,8 +89,12 @@ $playlistexists = FALSE;
          $dircontentsCached[] = $files[$key]["filename"] . "." . $files[$key]["type"][$i]["ext"];
         }
      }
-//  }
-//else echo "$playlistFile does not exist!<br>\n";
+  }
+else 
+  {
+   $playlistexists = FALSE;
+   $playlistUpdateNeeded = TRUE;
+  }
 
 //echo "<pre style=\"width: 40%; float: left;\">FILES:\n"; print_r($files); echo "</pre>\n";
 
@@ -154,8 +158,8 @@ foreach ($playlistContent as $key => $value)
 
 // read timestamp file if exists
 $timestampchanged = FALSE;
-//if (file_exists($timestampFile) and !$playlistUpdateNeeded)
-//  {
+if (file_exists($timestampFile) and !$playlistUpdateNeeded)
+  {
    $timestampexists = TRUE;
    $timestampFileContent = file($timestampFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
    foreach ($timestampFileContent as $key => $value)
@@ -166,7 +170,7 @@ $timestampchanged = FALSE;
       unset($timestamptmp);
      }
    unset($key, $value, $timestampFileContent);
-//  }
+  }
 //else
 if (!isset($timestamps[0]["time"]) or $timestamps[0]["time"] == "")
   {
@@ -315,6 +319,7 @@ $counter = -1;
 // update playlist.dat and timestamps.dat
 if (!$timestampexists or $timestampchanged or !$playlistexists or $playlistUpdateNeeded)
   {
+   //echo "Updating $timestampFile<br>\n";
    $timestamphandle = fopen($timestampFile,"w");
    foreach ($filesTimestamp as $key => $value)
      {
@@ -322,6 +327,7 @@ if (!$timestampexists or $timestampchanged or !$playlistexists or $playlistUpdat
      }
    fclose($timestamphandle);
 
+   //echo "Updating $playlistFile<br>\n";
    $playlisthandle = fopen($playlistFile,"w");
    foreach ($files as $key => $value)
      {
