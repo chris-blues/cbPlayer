@@ -10,7 +10,28 @@ require_once('cbplayer.conf.php');
 <div id="cbplayer">
 <?php
 $starttime = microtime(true);
-$version = "v0.12";
+$version = "v0.13";
+
+// ============
+// init gettext
+// ============
+$browserlang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+switch($browserlang)
+  {
+   case 'de': { $lang = "de_DE"; break; }
+   default: { $lang = "en"; break; }
+  }
+$directory = $cbPlayer_dirname . '/locale';
+$domain = 'cbplayer';
+$locale = "$lang";// echo "<!-- locale set to => $locale -->\n";
+
+setlocale(LC_MESSAGES, $locale);
+bindtextdomain($domain, $directory);
+textdomain($domain);
+bind_textdomain_codeset($domain, 'UTF-8');
+// ============
+// init gettext
+// ============
 
 require_once('getID3/getid3/getid3.php');
 $getID3 = new getID3;
@@ -433,15 +454,24 @@ echo "<hr>\n";
 var version = "<?php echo $version; ?>";
 var cbPlayer_dir = "<?php echo $cbPlayer_dirname; ?>";
 var showDownload = <?php if($cbPlayer_showDownload != false or !isset($cbPlayer_showDownload)) { echo "true"; } else { echo "false"; } ?>;
+var stringTitle = "<?php echo gettext("Title"); ?>:";
+var stringArtist = "<?php echo gettext("Artist"); ?>:";
+var stringAlbum = "<?php echo gettext("Album"); ?>:";
+var stringDownload = "<?php echo gettext("Download"); ?>:";
 initPlayer();
 
 </script>
 <noscript>Dieser Medienplayer benötigt JavaScript um zu funktionieren. Dazu müssen Sie JavaScript aktivieren.</noscript>
 </div>
 <?php
-if ($playlistUpdateNeeded) $cacheUpdated = "<br> Cache needed to be rebuilt, all media files have been rescanned! Sorry for the longer processing time!";
+if ($playlistUpdateNeeded) $cacheUpdated = "<br> " . gettext("Cache needed to be rebuilt, all media files have been rescanned! Sorry for the longer processing time!");
 $endtime = microtime(true);
-if ($cbPlayer_showTimer == true) echo "<p id=\"cbPlayer_footer\" style=\"font-size: 0.7em; text-align: center;\">Processing needed " . number_format($endtime - $starttime, 3) . " seconds.$cacheUpdated</p>\n";
+if ($cbPlayer_showTimer == true)
+  {
+   echo "<p id=\"cbPlayer_footer\" style=\"font-size: 0.7em; text-align: center;\">";
+   $totaltime = number_format($endtime - $starttime, 3);
+   printf(gettext("Processing needed %s seconds. %s</p>\n"),$totaltime, $cacheUpdated);
+  }
 //echo "<pre style=\"width: 49%; float: left;\">FILES:\n"; print_r($files); echo "</pre>\n";
 //echo "<pre style=\"width: 49%; float: left;\">DIR:\n"; print_r($dir); echo "</pre>\n";
 //echo "<pre style=\"width: 49%; float: left;\">DIRCONTENTS:\n"; print_r($dircontents); echo "</pre>\n";
