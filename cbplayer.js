@@ -59,10 +59,10 @@ function createPlaylist()
    document.getElementById("cbPlayer_progressbar").style.display = "block";
    document.getElementById("cbPlayer_mediaItems").innerHTML = currentMediaId + 1 + "/" + mediaElements.length;
    document.getElementById("cbPlayer_leftSideBox").style.display = "block";
-   document.getElementById("cbPlayer_artist").innerHTML = "Artist:";
-   document.getElementById("cbPlayer_title").innerHTML = "Title:";
-   document.getElementById("cbPlayer_album").innerHTML = "Album:";
-   if (showDownload != false) { document.getElementById("cbPlayer_download").innerHTML = "Download:"; }
+   document.getElementById("cbPlayer_artist").innerHTML = stringArtist;
+   document.getElementById("cbPlayer_title").innerHTML = stringTitle;
+   document.getElementById("cbPlayer_album").innerHTML = stringAlbum;
+   if (showDownload != false) { document.getElementById("cbPlayer_download").innerHTML = stringDownload; }
   }
 
 function createMediaTag(i)
