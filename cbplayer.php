@@ -10,7 +10,7 @@ require_once('cbplayer.conf.php');
 <div id="cbplayer">
 <?php
 $starttime = microtime(true);
-$version = "v0.13";
+$version = "v0.14";
 
 // ============
 // init gettext
@@ -43,7 +43,7 @@ $search = array("ä", "Ä", "ö", "Ö", "ü", "Ü", "ß", "&", "+", "'", ", ", "
 $replace = array("ae", "Ae", "oe", "Oe", "ue", "Ue", "ss", "_", "_", "", "_", "_", "_", "_", "_", "ogg", "ogg");
 
 $dir = scandir($cbPlayer_mediadir);
-$cbPlayer_cache_dir = realpath($cbPlayer_dirname) . "/cache";
+$cbPlayer_cache_dir = realpath($cbPlayer_mediadir) . "/.cbPlayer_cache";
 $timestampFile = $cbPlayer_cache_dir . "/timestamps.dat";
 $playlistFile = $cbPlayer_cache_dir . "/playlist.dat";
 
