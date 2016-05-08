@@ -18,6 +18,10 @@
   display: block;
 }
 
+.cbPlayer_playlistitem:hover {
+  background-color: rgba(250, 245, 235, 0.8);
+}
+
 audio, video {
   width: 100%;
   display: none;
