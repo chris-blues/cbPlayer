@@ -9,17 +9,22 @@
   text-align: center;
   font-size: 1.2em;
   font-weight: 600;
-  color: #4C0000;
 }
 
-.cbPlayer_playlistitem {
+.cbPlayer_playlist {
+  border-radius: 5px;
+  padding-left: 5px;
+}
+
+*.cbPlayer_playlistitem {
   text-decoration: none !important;
-  color: #000000;
   display: block;
+  color: inherit !important;
 }
 
-.cbPlayer_playlistitem:hover {
+*.cbPlayer_playlistitem:hover {
   background-color: rgba(250, 245, 235, 0.8);
+  color: inherit;
 }
 
 audio, video {
@@ -114,6 +119,10 @@ img.cbPlayer_mediacontrols {
 #cbPlayer_progInfo {
   padding: 9px 9px 0px;
   font-size: 0.7em;
+}
+
+#cbPlayer_infobox {
+  
 }
 
 .cbPlayer_mediaInfo {

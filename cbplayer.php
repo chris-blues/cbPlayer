@@ -4,18 +4,23 @@
 // ==     released under GPL-3 public license        ==
 // ==   see LICENSE in top directory for details     ==
 // ====================================================
+$cbPlayer_showDownload = FALSE;
+$playlistUpdateNeeded = FALSE;
 require_once('cbplayer.conf.php');
 ?>
 
 <div id="cbplayer">
 <?php
 $starttime = microtime(true);
-$version = "v0.14";
+$version = "v0.15";
 
 // ============
 // init gettext
 // ============
+
+//Try to get some language information from the browser request header
 $browserlang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+
 switch($browserlang)
   {
    case 'de': { $lang = "de_DE"; break; }
@@ -464,6 +469,7 @@ initPlayer();
 <noscript>Dieser Medienplayer benötigt JavaScript um zu funktionieren. Dazu müssen Sie JavaScript aktivieren.</noscript>
 </div>
 <?php
+$cacheUpdated = "";
 if ($playlistUpdateNeeded) $cacheUpdated = "<br> " . gettext("Cache needed to be rebuilt, all media files have been rescanned! Sorry for the longer processing time!");
 $endtime = microtime(true);
 if ($cbPlayer_showTimer == true)
