@@ -1,37 +1,41 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: cbPlayer\n"
-"POT-Creation-Date: 2016-05-08 14:21+0200\n"
-"PO-Revision-Date: 2016-05-08 14:21+0200\n"
+"POT-Creation-Date: 2016-08-18 17:39+0200\n"
+"PO-Revision-Date: 2016-08-18 17:39+0200\n"
 "Last-Translator: chris_blues <chris@musicchris.de>\n"
 "Language-Team: chris@musicchris.de\n"
 "Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.7.1\n"
+"X-Generator: Poedit 1.8.8\n"
 "X-Poedit-Basepath: ../../..\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: cbplayer.php\n"
 
-#: cbplayer.php:457
+#: cbplayer.php:345
+msgid "No media-data available"
+msgstr "Keine Mediendaten verfügbar"
+
+#: cbplayer.php:465
 msgid "Title"
 msgstr "Titel"
 
-#: cbplayer.php:458
+#: cbplayer.php:466
 msgid "Artist"
 msgstr "Künstler"
 
-#: cbplayer.php:459
+#: cbplayer.php:467
 msgid "Album"
 msgstr "Album"
 
-#: cbplayer.php:460
+#: cbplayer.php:468
 msgid "Download"
 msgstr "Download"
 
-#: cbplayer.php:467
+#: cbplayer.php:476
 msgid ""
 "Cache needed to be rebuilt, all media files have been rescanned! Sorry for "
 "the longer processing time!"
@@ -39,7 +43,7 @@ msgstr ""
 "Der Cache mußte neu aufgebaut werden, alle Mediendateien wurden erneut "
 "gescannt. Verzeihung für die längere Verarbeitungszeit!"
 
-#: cbplayer.php:473
+#: cbplayer.php:482
 #, php-format
 msgid "Processing needed %s seconds. %s</p>\n"
 msgstr "Verarbeitung brauchte %s Sekunden. %s</p>\n"

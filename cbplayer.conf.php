@@ -1,7 +1,7 @@
 <?php
 // Uncomment if you don't want a download-link to be shown for the current title
 
-//	$cbPlayer_showDownload = false;
+//	if (!isset($cbPlayer_showDownload)) $cbPlayer_showDownload = false;
 
 
 // Uncomment to show a little timer below the player, how long the processing of
@@ -9,6 +9,6 @@
 // processing time of the php part. (Also contains a message if the Cache needed
 // to be rebuilt.)
 
-//	$cbPlayer_showTimer = true;
+//	if (!isset($cbPlayer_showTimer)) $cbPlayer_showTimer = true;
 
 ?>

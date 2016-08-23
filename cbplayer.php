@@ -8,11 +8,11 @@ $cbPlayer_showDownload = FALSE;
 $playlistUpdateNeeded = FALSE;
 require_once('cbplayer.conf.php');
 ?>
-
 <div id="cbplayer">
+<script type="text/javascript" src="<?php echo $cbPlayer_dirname; ?>/cbplayer.js"></script>
 <?php
 $starttime = microtime(true);
-$version = "v0.15";
+$version = "v0.16";
 
 // ============
 // init gettext
@@ -340,6 +340,8 @@ $counter = -1;
       $files[$counter]["year"] = $ThisFileInfo['comments'][$year][0];
       }
    unset($ThisFileInfo);
+   if ($files[$counter]["artist"] == "" or !isset($files[$counter]["artist"])) $files[$counter]["artist"] = $name;
+   if ($files[$counter]["title"] == "" or !isset($files[$counter]["title"])) $files[$counter]["title"] = gettext("No media-data available");
   }
 
 // update playlist.dat and timestamps.dat
@@ -454,8 +456,8 @@ echo "<hr>\n";
     </tbody>
   </table>
 <div style="clear: both;"></div>
-<script>
 
+<script>
 var version = "<?php echo $version; ?>";
 var cbPlayer_dir = "<?php echo $cbPlayer_dirname; ?>";
 var showDownload = <?php if($cbPlayer_showDownload != false or !isset($cbPlayer_showDownload)) { echo "true"; } else { echo "false"; } ?>;
