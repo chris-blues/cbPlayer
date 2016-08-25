@@ -4,15 +4,17 @@
 // ==     released under GPL-3 public license        ==
 // ==   see LICENSE in top directory for details     ==
 // ====================================================
-$cbPlayer_showDownload = FALSE;
-$playlistUpdateNeeded = FALSE;
+
+if (!isset($cbPlayer_showDownload)) $cbPlayer_showDownload = FALSE;
+if (!isset($cbPlayer_showTimer)) $playlistUpdateNeeded = FALSE;
+
 require_once('cbplayer.conf.php');
 ?>
 <div id="cbplayer">
 <script type="text/javascript" src="<?php echo $cbPlayer_dirname; ?>/cbplayer.js"></script>
 <?php
 $starttime = microtime(true);
-$version = "v0.16";
+$version = "v0.17";
 
 // ============
 // init gettext
@@ -44,7 +46,7 @@ $getID3 = new getID3;
 // ==============
 // read media dir
 // ==============
-$search = array("ä", "Ä", "ö", "Ö", "ü", "Ü", "ß", "&", "+", "'", ", ", " ", ",", "__", "__", "ogv", "oga");
+$search = array("ogv", "oga");
 $replace = array("ae", "Ae", "oe", "Oe", "ue", "Ue", "ss", "_", "_", "", "_", "_", "_", "_", "_", "ogg", "ogg");
 
 $dir = scandir($cbPlayer_mediadir);
@@ -54,13 +56,9 @@ $playlistFile = $cbPlayer_cache_dir . "/playlist.dat";
 
 $dircounter = 0;
 foreach ($dir as $key => $filename)
-  { // screen out dotfiles ("." ".." or ".htaccess") and dirs - leave only normal files in the array! And make filenames URL compatible.
+  { // screen out dotfiles ("." ".." or ".htaccess") and dirs - leave only normal files in the array!
    if (strncmp($filename,".",1) == 0) { unset($dir[$key]); continue 1; }
 
-   $oldfilename = $filename;
-   $filename = str_replace($search, $replace, $filename);
-   if (strcmp($filename, $oldfilename) != 0) rename("$cbPlayer_mediadir/$oldfilename", "$cbPlayer_mediadir/$filename");
-   unset ($oldfilename);
    $dir[$key] = $filename;
    $ext = substr($filename, -3);
 
