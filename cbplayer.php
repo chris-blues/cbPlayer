@@ -401,7 +401,7 @@ foreach ($files as $key => $id)
      { ?>
          <div id="cbPlayer_playlistItem_<?php echo $files[$key]["id"] . "_" . $files[$key]["type"][$extkey]["ext"]; ?>"
               class="cbPlayer_src_<?php echo $files[$key]["id"]; ?>"
-              data-src="<?php echo "$cbPlayer_mediadir/" . rawurlencode($files[$key]["filename"]) . ".{$files[$key]["type"][$extkey]["ext"]}"; ?>"
+              data-src="<?php echo "$cbPlayer_mediadir" . rawurlencode($files[$key]["filename"]) . ".{$files[$key]["type"][$extkey]["ext"]}"; ?>"
               data-type="<?php echo $files[$key]["type"][$extkey]["mime"]; ?>"
               data-filesize="<?php echo $files[$key]["type"][$extkey]["filesize"]; ?>"
               data-fileformat="<?php echo $files[$key]["type"][$extkey]["ext"]; ?>"
