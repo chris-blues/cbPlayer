@@ -14,7 +14,7 @@ require_once('cbplayer.conf.php');
 <script type="text/javascript" src="<?php echo $cbPlayer_dirname; ?>/cbplayer.js"></script>
 <?php
 $starttime = microtime(true);
-$version = "v0.17";
+$version = "v0.18";
 
 // ============
 // init gettext
@@ -401,7 +401,7 @@ foreach ($files as $key => $id)
      { ?>
          <div id="cbPlayer_playlistItem_<?php echo $files[$key]["id"] . "_" . $files[$key]["type"][$extkey]["ext"]; ?>"
               class="cbPlayer_src_<?php echo $files[$key]["id"]; ?>"
-              data-src="<?php echo "$cbPlayer_mediadir" . rawurlencode($files[$key]["filename"]) . ".{$files[$key]["type"][$extkey]["ext"]}"; ?>"
+              data-src="<?php echo "$cbPlayer_mediadir/" . rawurlencode($files[$key]["filename"]) . ".{$files[$key]["type"][$extkey]["ext"]}"; ?>"
               data-type="<?php echo $files[$key]["type"][$extkey]["mime"]; ?>"
               data-filesize="<?php echo $files[$key]["type"][$extkey]["filesize"]; ?>"
               data-fileformat="<?php echo $files[$key]["type"][$extkey]["ext"]; ?>"
@@ -422,7 +422,7 @@ echo " <div id=\"cbPlayer_playlist\"></div>\n";
 
 echo "<hr>\n";
 ?>
-    <div id="cbPlayer_progressbar" onclick="getCursorPosition(event);">
+    <div id="cbPlayer_progressbar">
       <div id="cbPlayer_progressbarWrapper">
         <div id="cbPlayer_progressbarIndicator"></div>
       </div>
@@ -434,8 +434,8 @@ echo "<hr>\n";
     <a href="javascript:pauseMedia(currentMediaId);" class="cbPlayer_controls"><img id="cbPlayer_pause" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/pause.png" alt="pause" title="pause"></a>
     <a href="javascript:stopMedia(true);" id="cbPlayer_stopButton" class="cbPlayer_controls"><img id="cbPlayer_stop" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/stop.png" alt="stop" title="stop"></a>
     <a href="javascript:nextMedia();" class="cbPlayer_controls"><img id="cbPlayer_next" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/fwd.png" alt="next" title="next"></a>
-    <a class="cbPlayer_fullscreen cbPlayer_controls" href="javascript:fullscreen();" onclick="fullscreen();">
-      <img id="cbPlayer_fullscreen" class="cbPlayer_mediacontrols cbPlayer_fullscreen" src="<?php echo $cbPlayer_dirname; ?>/pics/fullscreen.png" alt="fullscreen" title="fullscreen" style="display: none;">
+    <a class="cbPlayer_fullscreen cbPlayer_controls" href="javascript:fullscreen();">
+      <img id="cbPlayer_fullscreen" class="cbPlayer_mediacontrols cbPlayer_fullscreen" src="<?php echo $cbPlayer_dirname; ?>/pics/fullscreen.png" alt="fullscreen" title="fullscreen">
     </a>
   </div>
   <div id="cbPlayer_progressinfo">
@@ -453,19 +453,17 @@ echo "<hr>\n";
       <tr><td class="cbPlayer_mediaInfo cbPlayer_leftside" id="cbPlayer_download"></td><td id="cbPlayer_currentDownload" class="cbPlayer_mediaInfo"></td></tr>
     </tbody>
   </table>
-<div style="clear: both;"></div>
+<div class="clear"></div>
 
-<script>
-var version = "<?php echo $version; ?>";
-var cbPlayer_dir = "<?php echo $cbPlayer_dirname; ?>";
-var showDownload = <?php if($cbPlayer_showDownload != false or !isset($cbPlayer_showDownload)) { echo "true"; } else { echo "false"; } ?>;
-var stringTitle = "<?php echo gettext("Title"); ?>:";
-var stringArtist = "<?php echo gettext("Artist"); ?>:";
-var stringAlbum = "<?php echo gettext("Album"); ?>:";
-var stringDownload = "<?php echo gettext("Download"); ?>:";
-initPlayer();
-
-</script>
+<div id="cbPlayer_programLocaleData"
+     data-version="<?php echo $version; ?>"
+     data-cbPlayer_dir="<?php echo $cbPlayer_dirname; ?>"
+     data-showDownload="<?php if($cbPlayer_showDownload != false or !isset($cbPlayer_showDownload)) { echo "true"; } else { echo "false"; } ?>"
+     data-stringTitle = "<?php echo gettext("Title"); ?>:"
+     data-stringArtist = "<?php echo gettext("Artist"); ?>:"
+     data-stringAlbum = "<?php echo gettext("Album"); ?>:"
+     data-stringDownload = "<?php echo gettext("Download"); ?>:">
+</div>
 <noscript>Dieser Medienplayer benötigt JavaScript um zu funktionieren. Dazu müssen Sie JavaScript aktivieren.</noscript>
 </div>
 <?php
@@ -474,7 +472,7 @@ if ($playlistUpdateNeeded) $cacheUpdated = "<br> " . gettext("Cache needed to be
 $endtime = microtime(true);
 if ($cbPlayer_showTimer == true)
   {
-   echo "<p id=\"cbPlayer_footer\" style=\"font-size: 0.7em; text-align: center;\">";
+   echo "<p id=\"cbPlayer_footer\">";
    $totaltime = number_format($endtime - $starttime, 3);
    printf(gettext("Processing needed %s seconds. %s</p>\n"),$totaltime, $cacheUpdated);
   }

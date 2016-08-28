@@ -7,17 +7,39 @@
 
 function initPlayer()
   {
+   console.log("cbPlayer: Initializing cbPlayer...");
    currentMediaId = 0;
    fileSupport = 0;
    mediaElements = document.getElementsByClassName("cbPlayer_mediaContent");
+   console.log("cbPlayer: Found " + mediaElements.length + " media items");
    isPlaying = false;
    isPaused = false;
+   var programData = document.getElementById('cbPlayer_programLocaleData');
+   version = programData.getAttribute("data-version");
+   console.log("cbPlayer: Version: " + version);
+   cbPlayer_dir = programData.getAttribute("data-cbPlayer_dir");
+   console.log("cbPlayer: cbPlayer_dir: " + cbPlayer_dir);
+   showDownload = programData.getAttribute("data-showDownload");
+   console.log("cbPlayer: showDownload: " + showDownload);
+   stringTitle = programData.getAttribute("data-stringTitle");
+   stringArtist = programData.getAttribute("data-stringArtist");
+   stringAlbum = programData.getAttribute("data-stringAlbum");
+   stringDownload = programData.getAttribute("data-stringDownload");
+   console.log("cbPlayer: cbPlayer Locale strings: " + stringTitle + " " + stringArtist + " " + stringAlbum + " " + stringDownload);
+
+   document.getElementById("cbPlayer_progressbar").addEventListener("click", getCursorPosition, false );
+   document.getElementById("cbPlayer_prev").addEventListener("click", function() { prevMedia(); });
+   document.getElementById("cbPlayer_play").addEventListener("click", function() { playMedia(currentMediaId); });
+   document.getElementById("cbPlayer_pause").addEventListener("click", function() { pauseMedia(currentMediaId); });
+   document.getElementById("cbPlayer_stop").addEventListener("click", function() { stopMedia(true); });
+   document.getElementById("cbPlayer_next").addEventListener("click", function() { nextMedia(); });
 
    addEventListener("mozfullscreenchange",function(){ trackFullScreen(); }, false);
    addEventListener("webkitfullscreenchange",function(){ trackFullScreen(); }, false);
    addEventListener("msfullscreenchange",function(){ trackFullScreen(); }, false);
 
    createPlaylist();
+   console.log("cbPlayer: initPlayer() has finished.");
   }
 
 // =======================
@@ -31,6 +53,7 @@ function createPlaylist()
         a.className = "cbPlayer_playlistitem";
         a.id = "cbPlayer_playlistItemLink_" + i;
         a.href = "javascript:playMedia(" + i + ");";
+	a.dataset.id = i;
 
         var div = document.createElement("div");
         div.id = i + "_" + mediaElements[i].getAttribute("data-filename");
@@ -48,9 +71,7 @@ function createPlaylist()
         var parent = document.getElementById("cbPlayer_playlist");
         parent.appendChild(a);
 
-        if (mediaElements.readyState > 0) showMedia(i);
-        if (mediaElements.readyState > 2) activateMedia(i);
-        if (mediaElements.readyState > 3) finishMedia(i);
+        document.getElementById("cbPlayer_playlistItemLink_" + i).addEventListener("click", function () { playMedia(this.getAttribute("data-id")); });
      }
 
 // =======================================
@@ -212,6 +233,7 @@ function prevMedia()
 
 function playMedia(MediaId)
     {
+     console.log("cbPlayer: playMedia() was called with MediaId: " + MediaId);
      if (isPlaying == true)
        {
         if (isPaused != true)
@@ -260,7 +282,7 @@ function playMedia(MediaId)
        }
      var downloads = document.getElementsByClassName("cbPlayer_src_" + currentMediaId);
         document.getElementById("cbPlayer_currentDownload").innerHTML = "";
-     
+
      if (showDownload != false)
         {
          for (var i = 0; i < downloads.length; i++)
@@ -369,3 +391,9 @@ function getCursorPosition(event)
      var x = event.clientX - rect.left;
      currentMedia.currentTime = (currentMedia.duration * x) / rect.width;
     }
+
+document.addEventListener('DOMContentLoaded', function ()
+  {
+   console.log("DOMContentLoaded has fired! Calling initPlayer(); ...");
+   initPlayer();
+  });

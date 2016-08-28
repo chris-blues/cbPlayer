@@ -128,3 +128,16 @@ img.cbPlayer_mediacontrols {
 .cbPlayer_mediaInfo {
   vertical-align: top;
 }
+
+#cbPlayer_fullscreen {
+  display: none;
+}
+
+.clear {
+  clear: both;
+}
+
+#cbPlayer_footer {
+  font-size: 0.7em;
+  text-align: center;
+}
