@@ -6,7 +6,8 @@
 // ====================================================
 
 if (!isset($cbPlayer_showDownload)) $cbPlayer_showDownload = FALSE;
-if (!isset($cbPlayer_showTimer)) $playlistUpdateNeeded = FALSE;
+if (!isset($cbPlayer_showTimer)) $cbPlayer_showTimer = FALSE;
+$playlistUpdateNeeded = FALSE;
 
 require_once('cbplayer.conf.php');
 ?>
@@ -14,7 +15,7 @@ require_once('cbplayer.conf.php');
 <script type="text/javascript" src="<?php echo $cbPlayer_dirname; ?>/cbplayer.js"></script>
 <?php
 $starttime = microtime(true);
-$version = "v0.18";
+$version = "v0.19";
 
 // ============
 // init gettext

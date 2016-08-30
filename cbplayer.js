@@ -21,6 +21,8 @@ function initPlayer()
    console.log("cbPlayer: cbPlayer_dir: " + cbPlayer_dir);
    showDownload = programData.getAttribute("data-showDownload");
    console.log("cbPlayer: showDownload: " + showDownload);
+   if ( showDownload == "false" ) { showDownload = false; }
+   else { showDownload = true; }
    stringTitle = programData.getAttribute("data-stringTitle");
    stringArtist = programData.getAttribute("data-stringArtist");
    stringAlbum = programData.getAttribute("data-stringAlbum");
