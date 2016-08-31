@@ -15,7 +15,7 @@ require_once('cbplayer.conf.php');
 <script type="text/javascript" src="<?php echo $cbPlayer_dirname; ?>/cbplayer.js"></script>
 <?php
 $starttime = microtime(true);
-$version = "v0.19";
+$version = "v0.21";
 
 // ============
 // init gettext
@@ -430,14 +430,12 @@ echo "<hr>\n";
     </div>
 <div id="cbPlayer_leftSideBox">
   <div class="cbPlayer_mediacontrols_wrapper">
-    <a href="javascript:prevMedia();" class="cbPlayer_controls"><img id="cbPlayer_prev" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/rwd.png" alt="prev" title="prev"></a>
-    <a href="javascript:playMedia(currentMediaId);" class="cbPlayer_controls"><img id="cbPlayer_play" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/play.png" alt="play" title="play"></a>
-    <a href="javascript:pauseMedia(currentMediaId);" class="cbPlayer_controls"><img id="cbPlayer_pause" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/pause.png" alt="pause" title="pause"></a>
-    <a href="javascript:stopMedia(true);" id="cbPlayer_stopButton" class="cbPlayer_controls"><img id="cbPlayer_stop" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/stop.png" alt="stop" title="stop"></a>
-    <a href="javascript:nextMedia();" class="cbPlayer_controls"><img id="cbPlayer_next" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/fwd.png" alt="next" title="next"></a>
-    <a class="cbPlayer_fullscreen cbPlayer_controls" href="javascript:fullscreen();">
-      <img id="cbPlayer_fullscreen" class="cbPlayer_mediacontrols cbPlayer_fullscreen" src="<?php echo $cbPlayer_dirname; ?>/pics/fullscreen.png" alt="fullscreen" title="fullscreen">
-    </a>
+    <img id="cbPlayer_prev" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/rwd.png" alt="prev" title="prev">
+    <img id="cbPlayer_play" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/play.png" alt="play" title="play">
+    <img id="cbPlayer_pause" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/pause.png" alt="pause" title="pause">
+    <img id="cbPlayer_stop" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/stop.png" alt="stop" title="stop">
+    <img id="cbPlayer_next" class="cbPlayer_mediacontrols" src="<?php echo $cbPlayer_dirname; ?>/pics/fwd.png" alt="next" title="next">
+    <img id="cbPlayer_fullscreen" class="cbPlayer_mediacontrols cbPlayer_fullscreen" src="<?php echo $cbPlayer_dirname; ?>/pics/fullscreen.png" alt="fullscreen" title="fullscreen">
   </div>
   <div id="cbPlayer_progressinfo">
     <span id="cbPlayer_mediaItems" class="cbPlayer_progressinfo"></span> <span id="cbPlayer_progress" class="cbPlayer_progressinfo">0:00 / 0:00</span>

@@ -5,9 +5,15 @@
 // ==  Read all media items and create a playlist  ==
 // ==================================================
 
+var cbPlayerInit = false;
+
 function initPlayer()
   {
    console.log("cbPlayer: Initializing cbPlayer...");
+
+   // Stop init from loading twice!
+   if ( cbPlayerInit == true ) { console.log("cbPlayer: initPlayer(): already initialized. Exiting."); return; }
+
    currentMediaId = 0;
    fileSupport = 0;
    mediaElements = document.getElementsByClassName("cbPlayer_mediaContent");
@@ -35,6 +41,7 @@ function initPlayer()
    document.getElementById("cbPlayer_pause").addEventListener("click", function() { pauseMedia(currentMediaId); });
    document.getElementById("cbPlayer_stop").addEventListener("click", function() { stopMedia(true); });
    document.getElementById("cbPlayer_next").addEventListener("click", function() { nextMedia(); });
+   document.getElementById("cbPlayer_fullscreen").addEventListener("click", function() { fullscreen(); });
 
    addEventListener("mozfullscreenchange",function(){ trackFullScreen(); }, false);
    addEventListener("webkitfullscreenchange",function(){ trackFullScreen(); }, false);
@@ -42,6 +49,7 @@ function initPlayer()
 
    createPlaylist();
    console.log("cbPlayer: initPlayer() has finished.");
+   cbPlayerInit = true;
   }
 
 // =======================
@@ -49,13 +57,16 @@ function initPlayer()
 // =======================
 function createPlaylist()
   {
+   // Stop init from loading twice!
+   if ( cbPlayerInit == true ) { console.log("cbPlayer: createPlaylist(): already initialized. Exiting."); return; }
+
    for (var i = 0; i < mediaElements.length; i++)
      {
         var a = document.createElement("a"); // create Link - non-clickable yet, until we have the necessary data downloaded!
         a.className = "cbPlayer_playlistitem";
         a.id = "cbPlayer_playlistItemLink_" + i;
-        a.href = "javascript:playMedia(" + i + ");";
-	a.dataset.id = i;
+	a.href = "javascript:void(0);";
+        a.dataset.id = i;
 
         var div = document.createElement("div");
         div.id = i + "_" + mediaElements[i].getAttribute("data-filename");
@@ -73,7 +84,10 @@ function createPlaylist()
         var parent = document.getElementById("cbPlayer_playlist");
         parent.appendChild(a);
 
-        document.getElementById("cbPlayer_playlistItemLink_" + i).addEventListener("click", function () { playMedia(this.getAttribute("data-id")); });
+        document.getElementById("cbPlayer_playlistItemLink_" + i).addEventListener("click", function () {
+	  var cbPlayer_TrackId = Number(this.getAttribute("data-id"));
+	  playMedia(cbPlayer_TrackId);
+	});
      }
 
 // =======================================
@@ -86,6 +100,7 @@ function createPlaylist()
    document.getElementById("cbPlayer_title").innerHTML = stringTitle;
    document.getElementById("cbPlayer_album").innerHTML = stringAlbum;
    if (showDownload != false) { document.getElementById("cbPlayer_download").innerHTML = stringDownload; }
+   cbPlayerInit = true;
   }
 
 function createMediaTag(i)
@@ -155,10 +170,10 @@ function activateMediaControl(cbplayerControllerId)
     {
      var cbplayerController = document.getElementsByClassName("cbPlayer_mediacontrols");
      var controllerButton = document.getElementById("cbPlayer_" + cbplayerControllerId);
-     controllerButton.blur();
+     //controllerButton.blur();
      for (var i = 0; i < cbplayerController.length; i++)
        {
-        cbplayerController[i].blur();
+        //cbplayerController[i].blur();
         cbplayerController[i].removeAttribute("style");
         cbplayerController[i].style.boxShadow = "0px 0px 2px 1px gray";
        }
@@ -235,7 +250,7 @@ function prevMedia()
 
 function playMedia(MediaId)
     {
-     console.log("cbPlayer: playMedia() was called with MediaId: " + MediaId);
+     console.log("cbPlayer: calling playMedia(" + MediaId + ");");
      if (isPlaying == true)
        {
         if (isPaused != true)
@@ -248,8 +263,8 @@ function playMedia(MediaId)
         createMediaTag(MediaId);
        }
 
-     var anchors = document.getElementsByTagName("a");
-     for (var i = 0; i < anchors.length; i++) { anchors[i].blur(); }
+     //var anchors = document.getElementsByTagName("a");
+     //for (var i = 0; i < anchors.length; i++) { anchors[i].blur(); }
 
      currentMediaId = MediaId;
 
@@ -266,12 +281,15 @@ function playMedia(MediaId)
      if (document.getElementById("cbPlayer_" + currentMediaId).getAttribute("data-mediatype") == "video")
        {
         document.getElementById(currentMediaId).style.display = "block";
+	document.getElementById("cbPlayer_fullscreen").style.display = "inline";
        }
      document.getElementById(currentMediaId).play();
      isPlaying = true;
      isPaused = false;
 
-     document.getElementById("cbPlayer_mediaItems").innerHTML = currentMediaId + 1 + "/" + mediaElements.length;
+     var cbPlayer_trackNumber = currentMediaId;
+     cbPlayer_trackNumber += 1;
+     document.getElementById("cbPlayer_mediaItems").innerHTML = cbPlayer_trackNumber + "/" + mediaElements.length;
      var currentMedia = document.getElementById(currentMediaId);
      var currentMediaData = document.getElementById("cbPlayer_" + currentMediaId);
 
@@ -321,7 +339,7 @@ function playMedia(MediaId)
 function stopMedia(unload)
   {
    activateMediaControl("stop");
-   document.getElementById("cbPlayer_stopButton").blur();
+   //document.getElementById("cbPlayer_stopButton").blur();
    if (isPlaying == true)
      {
       var currentlyPlaying = document.getElementById(currentMediaId);
@@ -347,7 +365,7 @@ function stopMedia(unload)
 function pauseMedia()
   {
    activateMediaControl("pause");
-   document.getElementById("cbPlayer_pause").blur();
+   //document.getElementById("cbPlayer_pause").blur();
    if (isPlaying == true)
      {
       document.getElementById(currentMediaId).pause();
@@ -364,7 +382,7 @@ function nextMedia()
 
 function fullscreen()
     {
-     document.getElementById("cbPlayer_fullscreen").blur();
+     //document.getElementById("cbPlayer_fullscreen").blur();
      var currentMedia = document.getElementById(currentMediaId);
 
      currentMedia.controls = true;
