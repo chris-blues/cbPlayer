@@ -15,7 +15,7 @@ require_once('cbplayer.conf.php');
 <script type="text/javascript" src="<?php echo $cbPlayer_dirname; ?>/cbplayer.js"></script>
 <?php
 $starttime = microtime(true);
-$version = "v0.21";
+$version = "v0.22";
 
 // ============
 // init gettext
@@ -47,8 +47,6 @@ $getID3 = new getID3;
 // ==============
 // read media dir
 // ==============
-$search = array("ogv", "oga");
-$replace = array("ae", "Ae", "oe", "Oe", "ue", "Ue", "ss", "_", "_", "", "_", "_", "_", "_", "_", "ogg", "ogg");
 
 $dir = scandir($cbPlayer_mediadir);
 $cbPlayer_cache_dir = realpath($cbPlayer_mediadir) . "/.cbPlayer_cache";
@@ -65,9 +63,10 @@ foreach ($dir as $key => $filename)
 
    // quick and dirty workaround for 4-letter extension "webm"
    if ($ext == "ebm") { $ext = "webm"; $name = substr($name, 0, -1); }
+   if ($ext == "lac") { $ext = "flac"; $name = substr($name, 0, -1); }
 
    // check if this file is usable, skip if not!
-   $supported_filetypes = array("mp3", "mp4", "ogg", "oga", "ogv", "webm");
+   $supported_filetypes = array("mp3", "mp4", "ogg", "oga", "ogv", "webm", "flac");
    foreach ($supported_filetypes as $typenum => $filetype)
      {
       if (strcasecmp($ext,$filetype) == 0) $supported = TRUE;
@@ -228,7 +227,7 @@ foreach ($dircontents as $key => $filename)
 
 $counter = -1;
 
- foreach ($dircontents as $key => $filename)
+foreach ($dircontents as $key => $filename)
   {
    // if this file has the same name as the last run, but different extension -> stay in the same branch, but add extension
    $lastname = $name;
@@ -237,6 +236,7 @@ $counter = -1;
 
    // quick and dirty workaround for 4-letter extension "webm"
    if ($ext == "ebm") { $ext = "webm"; $name = substr($name, 0, -1); }
+   if ($ext == "lac") { $ext = "flac"; $name = substr($name, 0, -1); }
 
    $fullname = "$cbPlayer_mediadir/$filename";
 
@@ -261,15 +261,17 @@ $counter = -1;
          // ===================================================================
          if ($ThisFileInfo["fileformat"] == "ogg" or $ThisFileInfo["fileformat"] == "ogv" or $ThisFileInfo["fileformat"] == "mp4") $files[$counter]["type"][$extcount]["mime"] = "video/" . $ThisFileInfo["fileformat"];
          else $files[$counter]["type"][$extcount]["mime"] = $ThisFileInfo["mime_type"];
-         
+
          if ($ThisFileInfo["fileformat"] == "ogg") $files[$counter]["type"][$extcount]["codec"] = $ThisFileInfo["video"]["dataformat"] . ", " . $ThisFileInfo["audio"]["dataformat"];
-	 else $files[$counter]["type"][$extcount]["codec"] = $ThisFileInfo["video"]["fourcc"] . ", " . $ThisFileInfo["audio"]["codec"];
+         else $files[$counter]["type"][$extcount]["codec"] = $ThisFileInfo["video"]["fourcc"] . ", " . $ThisFileInfo["audio"]["codec"];
         }
       else
         {
          if ($ThisFileInfo["fileformat"] == "ogg" or $ThisFileInfo["fileformat"] == "oga") $files[$counter]["type"][$extcount]["mime"] = "audio/" . $ThisFileInfo["fileformat"];
          else $files[$counter]["type"][$extcount]["mime"] = $ThisFileInfo["mime_type"];
          $files[$counter]["type"][$extcount]["codec"] = $ThisFileInfo["audio"]["codec"];
+         if ($ThisFileInfo["fileformat"] == "flac") $files[$counter]["type"][$extcount]["codec"] = $ThisFileInfo["audio"]["dataformat"];
+         if ($ThisFileInfo["fileformat"] == "flac") $files[$counter]["type"][$extcount]["mime"] = "audio/" . $ThisFileInfo["fileformat"];
         }
 
       // Check if some tags are missing - try to get it from alternative file!
@@ -287,7 +289,7 @@ $counter = -1;
         }
       if (!isset($files[$counter]["year"]) or $files[$counter]["year"] == "")
         {
-         $files[$counter]["year"] = $ThisFileInfo['comments'][$year][0];
+         $files[$counter]["year"] = $ThisFileInfo['comments']["year"][0];
         }
      }
    else // new filename, so make a new branch
@@ -327,6 +329,8 @@ $counter = -1;
             $files[$counter]["type"][0]["mime"] = $ThisFileInfo["mime_type"];
             $files[$counter]["type"][0]["codec"] = $ThisFileInfo["audio"]["codec"];
 	   }
+	 if ($ThisFileInfo["fileformat"] == "flac") $files[$counter]["type"][0]["codec"] = $ThisFileInfo["audio"]["dataformat"];
+         if ($ThisFileInfo["fileformat"] == "flac") $files[$counter]["type"][0]["mime"] = "audio/" . $ThisFileInfo["fileformat"];
         }
       $files[$counter]["playtime"] = ceil($ThisFileInfo["playtime_seconds"]);
       $files[$counter]["id"] = $counter;
@@ -336,7 +340,7 @@ $counter = -1;
       $files[$counter]["artist"] = $ThisFileInfo['comments']['artist'][0];
       $files[$counter]["title"] = $ThisFileInfo['comments']['title'][0];
       $files[$counter]["album"] = $ThisFileInfo['comments']['album'][0];
-      $files[$counter]["year"] = $ThisFileInfo['comments'][$year][0];
+      $files[$counter]["year"] = $ThisFileInfo['comments']['year'][0];
       }
    unset($ThisFileInfo);
    if ($files[$counter]["artist"] == "" or !isset($files[$counter]["artist"])) $files[$counter]["artist"] = $name;
@@ -463,7 +467,7 @@ echo "<hr>\n";
      data-stringAlbum = "<?php echo gettext("Album"); ?>:"
      data-stringDownload = "<?php echo gettext("Download"); ?>:">
 </div>
-<noscript>Dieser Medienplayer benötigt JavaScript um zu funktionieren. Dazu müssen Sie JavaScript aktivieren.</noscript>
+<noscript><?php gettext("Dieser Medienplayer benötigt JavaScript um zu funktionieren. Dazu müssen Sie JavaScript aktivieren."); ?></noscript>
 </div>
 <?php
 $cacheUpdated = "";
