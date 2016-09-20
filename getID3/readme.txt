@@ -187,7 +187,7 @@ if ($fp_remote = fopen($remotefilename, 'rb')) {
 		// Initialize getID3 engine
 		$getID3 = new getID3;
 
-		$ThisFileInfo = $getID3->analyze($filename);
+		$ThisFileInfo = $getID3->analyze($localtempfilename);
 
         // Delete temporary file
         unlink($localtempfilename);
@@ -615,3 +615,4 @@ Reference material:
 * http://wyday.com/cuesharp/specification.php
 * http://www.sno.phy.queensu.ca/~phil/exiftool/TagNames/Nikon.html
 * http://www.codeproject.com/Articles/8295/MPEG-Audio-Frame-Header
+* http://dsd-guide.com/sites/default/files/white-papers/DSFFileFormatSpec_E.pdf
