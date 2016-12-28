@@ -1,0 +1,49 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: cbPlayer\n"
+"POT-Creation-Date: 2016-08-18 17:39+0200\n"
+"PO-Revision-Date: 2016-12-28 17:25+0100\n"
+"Last-Translator: Anne Altenburg <annealtenburg@gmx.net>\n"
+"Language-Team: cbPlayer\n"
+"Language: pt\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.10\n"
+"X-Poedit-Basepath: ../../..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: cbplayer.php\n"
+
+#: cbplayer.php:345
+msgid "No media-data available"
+msgstr "Sem dados de mídia disponíveis"
+
+#: cbplayer.php:465
+msgid "Title"
+msgstr "Titulo"
+
+#: cbplayer.php:466
+msgid "Artist"
+msgstr "Artista"
+
+#: cbplayer.php:467
+msgid "Album"
+msgstr "Álbum"
+
+#: cbplayer.php:468
+msgid "Download"
+msgstr "Download"
+
+#: cbplayer.php:476
+msgid ""
+"Cache needed to be rebuilt, all media files have been rescanned! Sorry for "
+"the longer processing time!"
+msgstr ""
+"O Cache precisava de ser reconstruido. Desculpe pelo major tempo de "
+"processamento. "
+
+#: cbplayer.php:482
+#, php-format
+msgid "Processing needed %s seconds. %s</p>\n"
+msgstr "O processamento precisou %s segundos. %s</p>\n"
