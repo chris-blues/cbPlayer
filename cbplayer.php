@@ -59,6 +59,7 @@ foreach ($dir as $key => $filename)
    if (strncmp($filename,".",1) == 0) { unset($dir[$key]); continue 1; }
 
    $dir[$key] = $filename;
+   $name = substr($filename, 0, strlen($filename) - 4);
    $ext = substr($filename, -3);
 
    // quick and dirty workaround for 4-letter extension "webm"
