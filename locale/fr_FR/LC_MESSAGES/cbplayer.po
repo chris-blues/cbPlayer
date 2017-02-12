@@ -1,62 +1,62 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: cbPlayer\n"
-"POT-Creation-Date: 2017-02-12 12:02+0100\n"
-"PO-Revision-Date: 2017-02-12 12:02+0100\n"
+"POT-Creation-Date: 2017-02-12 11:59+0100\n"
+"PO-Revision-Date: 2017-02-12 12:01+0100\n"
 "Last-Translator: chris_blues <chris@musicchris.de>\n"
-"Language-Team: cbPlayer <chris@musicchris.de>\n"
-"Language: pt\n"
+"Language-Team: chris@musicchris.de <chris@musicchris.de>\n"
+"Language: fr_FR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.8.11\n"
 "X-Poedit-Basepath: ../../..\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
 #: cbplayer.php:353
 msgid "No media-data available"
-msgstr "Sem dados de mídia disponíveis"
+msgstr "Aucune donnée média disponible"
 
 #: cbplayer.php:471
 msgid "Title"
-msgstr "Titulo"
+msgstr "Titre"
 
 #: cbplayer.php:472
 msgid "Artist"
-msgstr "Artista"
+msgstr "Artiste"
 
 #: cbplayer.php:473
 msgid "Album"
-msgstr "Álbum"
+msgstr "Album"
 
 #: cbplayer.php:474
 msgid "Download"
-msgstr "Download"
+msgstr "Télécharger"
 
 #: cbplayer.php:476
 msgid "This media player needs JavaScript to work. Please allow JavaScript."
 msgstr ""
-"Este leitor multimédia requer JavaScript para funcionar. Você precisa "
-"habilitar o Javascript."
+"Ce lecteur multimédia nécessite JavaScript pour fonctionner. Vous devez "
+"activer JavaScript."
 
 #: cbplayer.php:480
 msgid ""
 "Cache needed to be rebuilt, all media files have been rescanned! Sorry for "
 "the longer processing time!"
 msgstr ""
-"O Cache precisava de ser reconstruido. Desculpe pelo major tempo de "
-"processamento. "
+"Cache nécessaire pour être reconstruit, toutes mediafiles lesquantités "
+"réanalysés! Désolée pour le temps de traitement plus long!"
 
 #: cbplayer.php:486
 #, php-format
 msgid "Processing needed %s seconds. %s</p>\n"
-msgstr "O processamento precisou %s segundos. %s</p>\n"
+msgstr "Traitement requis %s secondes. %s</p>\n"
 
 #~ msgid ""
 #~ "Dieser Medienplayer benötigt JavaScript um zu funktionieren. Dazu müssen "
 #~ "Sie JavaScript aktivieren."
 #~ msgstr ""
-#~ "Este leitor multimédia requer JavaScript para funcionar. Você precisa "
-#~ "habilitar o Javascript."
+#~ "Ce lecteur multimédia nécessite JavaScript pour fonctionner. Vous devez "
+#~ "activer JavaScript."

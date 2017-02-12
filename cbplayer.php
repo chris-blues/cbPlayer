@@ -22,21 +22,26 @@ $version = "v0.22";
 // ============
 
 //Try to get some language information from the browser request header
-$browserlang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+if (!isset($cbPlayer_overrideLocale) or !$cbPlayer_overrideLocale) $browserlang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+else $browserlang = $lang;
+echo "<!-- browser language setting: $browserlang -->\n";
 
 switch($browserlang)
   {
-   case 'de': { $lang = "de_DE"; break; }
-   default: { $lang = "en"; break; }
+   case 'de': { $locale = "de_DE"; break; }
+   case 'en': { $locale = "en_GB"; break; }
+   case 'fr': { $locale = "fr_FR"; break; }
+   case 'pt': { $locale = "pt_PT"; break; }
+   default:   { $locale = "en_GB"; break; }
   }
 $directory = $cbPlayer_dirname . '/locale';
 $domain = 'cbplayer';
-$locale = "$lang";// echo "<!-- locale set to => $locale -->\n";
 
-setlocale(LC_MESSAGES, $locale);
+$localeLang = setlocale(LC_MESSAGES, $locale . ".utf8");
 bindtextdomain($domain, $directory);
 textdomain($domain);
-bind_textdomain_codeset($domain, 'UTF-8');
+$localeCodeset = bind_textdomain_codeset($domain, 'UTF-8');
+echo "<!-- locale: $localeLang : $localeCodeset -->\n";
 // ============
 // init gettext
 // ============
@@ -115,7 +120,7 @@ if (file_exists($playlistFile))
         }
      }
   }
-else 
+else
   {
    $playlistexists = FALSE;
    $playlistUpdateNeeded = TRUE;
@@ -468,7 +473,7 @@ echo "<hr>\n";
      data-stringAlbum = "<?php echo gettext("Album"); ?>:"
      data-stringDownload = "<?php echo gettext("Download"); ?>:">
 </div>
-<noscript><?php gettext("Dieser Medienplayer benötigt JavaScript um zu funktionieren. Dazu müssen Sie JavaScript aktivieren."); ?></noscript>
+<noscript><?php echo gettext("This media player needs JavaScript to work. Please allow JavaScript."); ?></noscript>
 </div>
 <?php
 $cacheUpdated = "";
