@@ -10,7 +10,9 @@ if (!isset($cbPlayer_showTimer)) $cbPlayer_showTimer = FALSE;
 $playlistUpdateNeeded = FALSE;
 
 require_once('cbplayer.conf.php');
+require_once('cbplayer.functions.php');
 ?>
+
 <div id="cbplayer">
 <script type="text/javascript" src="<?php echo $cbPlayer_dirname; ?>/cbplayer.js"></script>
 <?php
