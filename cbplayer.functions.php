@@ -91,4 +91,24 @@ if (!function_exists('array_column')) {
     }
 }
 
+function cbPlayer_prettyTime ($input) {
+  // expects seconds (float) as input
+
+  $newTime = round($input, 9);
+
+  if ($newTime <= 1) {
+    $milli = $newTime * 1000;
+    $newTime = $milli;
+
+    if ($milli < 1) {
+      $newTime = $milli * 1000;
+      return sprintf("%05.3f µs", $newTime);
+    } else {
+      return sprintf("%05.3f ms", $newTime);
+    }
+  } else {
+    return sprintf("%05.3f s", $newTime);
+  }
+}
+
 ?>

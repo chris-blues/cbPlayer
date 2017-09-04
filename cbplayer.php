@@ -5,11 +5,18 @@
 // ==   see LICENSE in top directory for details     ==
 // ====================================================
 
+//error_reporting(E_ALL);
+error_reporting(E_ALL & ~E_NOTICE);
+ini_set("display_errors", 0);
+ini_set("log_errors", 1);
+ini_set("error_log", "cbplayer/php-error.log");
+
+require_once('cbplayer.conf.php');
+
 if (!isset($cbPlayer_showDownload)) $cbPlayer_showDownload = FALSE;
 if (!isset($cbPlayer_showTimer)) $cbPlayer_showTimer = FALSE;
 $playlistUpdateNeeded = FALSE;
 
-require_once('cbplayer.conf.php');
 require_once('cbplayer.functions.php');
 ?>
 
@@ -17,7 +24,7 @@ require_once('cbplayer.functions.php');
 <script type="text/javascript" src="<?php echo $cbPlayer_dirname; ?>/cbplayer.js"></script>
 <?php
 $starttime = microtime(true);
-$version = "v0.23";
+$version = "v0.24";
 
 // ============
 // init gettext
@@ -475,17 +482,16 @@ echo "<hr>\n";
      data-stringAlbum = "<?php echo gettext("Album"); ?>:"
      data-stringDownload = "<?php echo gettext("Download"); ?>:">
 </div>
-<noscript><?php echo gettext("This media player needs JavaScript to work. Please allow JavaScript."); ?></noscript>
-</div>
+
 <?php
 $cacheUpdated = "";
 if ($playlistUpdateNeeded) $cacheUpdated = "<br> " . gettext("Cache needed to be rebuilt, all media files have been rescanned! Sorry for the longer processing time!");
 $endtime = microtime(true);
 if ($cbPlayer_showTimer == true)
   {
-   echo "<p id=\"cbPlayer_footer\">";
-   $totaltime = number_format($endtime - $starttime, 3);
-   printf(gettext("Processing needed %s seconds. %s</p>\n"),$totaltime, $cacheUpdated);
+   echo "<div id=\"cbPlayer_footer\">";
+   $totaltime = cbPlayer_prettyTime($endtime - $starttime);
+   printf(gettext("Processing needed %s. %s</div>\n"), $totaltime, $cacheUpdated);
   }
 //echo "<pre style=\"width: 49%; float: left;\">FILES:\n"; print_r($files); echo "</pre>\n";
 //echo "<pre style=\"width: 49%; float: left;\">DIR:\n"; print_r($dir); echo "</pre>\n";
@@ -494,3 +500,6 @@ if ($cbPlayer_showTimer == true)
 //echo "<pre style=\"width: 49%; float: left;\">FILESTIMESTAMP:\n"; print_r($filesTimestamp); echo "</pre>\n";
 //echo "<pre style=\"width: 49%; float: left;\">TIMESTAMPS:\n"; print_r($timestamps); echo "</pre>\n";
 ?>
+
+<noscript><?php echo gettext("This media player needs JavaScript to work. Please allow JavaScript."); ?></noscript>
+</div>
