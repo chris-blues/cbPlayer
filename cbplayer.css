@@ -122,11 +122,14 @@ img.cbPlayer_mediacontrols {
 }
 
 #cbPlayer_infobox {
-  
+
 }
 
 .cbPlayer_mediaInfo {
   vertical-align: top;
+  padding: 2px 8px;
+  border: 1px solid #CCCCCC;
+  background-color: #DDDDDD;
 }
 
 #cbPlayer_fullscreen {
