@@ -35,14 +35,18 @@ if (!isset($cbPlayer_overrideLocale) or !$cbPlayer_overrideLocale) $browserlang 
 else $browserlang = $lang;
 echo "<!-- browser language setting: $browserlang -->\n";
 
-switch($browserlang)
-  {
-   case 'de': { $locale = "de_DE"; break; }
-   case 'en': { $locale = "en_GB"; break; }
-   case 'fr': { $locale = "fr_FR"; break; }
-   case 'pt': { $locale = "pt_PT"; break; }
-   default:   { $locale = "en_GB"; break; }
-  }
+if (strlen($browserlang) > 2) {
+    $locale = $browserlang;
+} else {
+    switch($browserlang) {
+        case 'de': { $locale = "de_DE"; break; }
+        case 'en': { $locale = "en_GB"; break; }
+        case 'fr': { $locale = "fr_FR"; break; }
+        case 'es': { $locale = "es_ES"; break; }
+        case 'pt': { $locale = "pt_PT"; break; }
+        default:   { $locale = "en_GB"; break; }
+    }
+}
 $directory = $cbPlayer_dirname . '/locale';
 $domain = 'cbplayer';
 

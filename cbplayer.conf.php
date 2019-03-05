@@ -14,6 +14,6 @@
 // Uncomment to override the locale setting. Useful, if you have a locale set on
 // your website and want cbPlayer to unconditionally select your locale.
 
-	if (!isset($cbPlayer_overrideLocale)) $cbPlayer_overrideLocale = true;
+    if (!isset($cbPlayer_overrideLocale)) $cbPlayer_overrideLocale = true;
 
 ?>
