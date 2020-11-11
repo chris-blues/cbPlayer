@@ -207,10 +207,7 @@ if (file_exists($timestampFile) and !$playlistUpdateNeeded)
    $timestampFileContent = file($timestampFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
    foreach ($timestampFileContent as $key => $value)
      {
-      $timestamptmp = explode(" ", $value);
-      $timestamps[$key]["file"] = $timestamptmp[0];
-      $timestamps[$key]["time"] = $timestamptmp[1];
-      unset($timestamptmp);
+      list($timestamps[$key]["file"], $timestamps[$key]["time"]) = explode("\0", $value);
      }
    unset($key, $value, $timestampFileContent);
   }
@@ -373,7 +370,7 @@ if (!$timestampexists or $timestampchanged or !$playlistexists or $playlistUpdat
    $timestamphandle = fopen($timestampFile,"w");
    foreach ($filesTimestamp as $key => $value)
      {
-      fwrite($timestamphandle, "{$filesTimestamp[$key]["file"]} {$filesTimestamp[$key]["time"]}\n");
+      fwrite($timestamphandle, "{$filesTimestamp[$key]["file"]}\0{$filesTimestamp[$key]["time"]}\n");
      }
    fclose($timestamphandle);
 
